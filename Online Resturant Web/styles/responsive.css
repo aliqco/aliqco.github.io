@@ -1,0 +1,159 @@
+@media screen and (max-width: 1400px) {
+
+}
+
+@media screen and (max-width: 1200px) {
+    .featured-avatar {
+        max-width: 44rem;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .menu {
+        flex-direction: column;
+        align-items: flex-start;
+        background-color: var(--primary-color);
+        position: fixed;
+        top: 0;
+        left: -25rem;
+        width: 21rem;
+        height: 100%;
+        padding: 4rem 2rem;
+        gap: 4rem;
+        transition: all 300ms ease;
+        z-index: 555;
+    }
+    .mobile-menu {
+        display: block;
+    }
+    .menu__item {
+        color: #fff;
+    }
+    .menu__item:hover {
+        color: #fff;
+    }
+    .mobile__logo {
+        display: flex;
+        align-items: flex-end;
+        gap: 1rem;
+    }
+    .nav__img--logo {
+        color: #fff;
+        font-family: "Poppins Medium";
+    }
+    .featured-content__title {
+        font-size: 3.2rem;
+        line-height: 4.8rem;
+    }
+    .featured-content__title,
+    .featured-content__caption {
+        text-shadow: none;
+    }
+    .featured-content {
+        max-width: 24rem;
+        margin-bottom: 4rem;
+    }
+    .featured-avatar {
+        max-width: 30rem;
+    }
+    .food-menu__item {
+        margin-bottom: 0;
+        padding: 1rem 2rem;
+    }
+    .food-menu__categories {
+        margin-bottom: 2rem;
+    }
+    .find-store__title {
+        font-size: 3.2rem;
+    }
+    .footer__wrapper {
+        flex-direction: column-reverse;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    * {
+        cursor: default !important;
+    }
+    .featured-avatar {
+        display: none;
+    }
+    .featured-avatar--mobile {
+        position: relative;
+        max-width: 26rem;
+        display: block;
+        margin: 0 auto;
+        margin-bottom: 10rem;
+    }
+    .featured-content {
+        text-align: center;
+        max-width: 40rem;
+        margin-bottom: 6rem;
+    }
+    .featured__img--abs {
+        left: -4rem;
+        top: -4rem;
+    }
+    .all__wrapper {
+        justify-content: center;
+    }
+    .featured__left-wrapper {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+    }
+    .featured-order__order {
+        padding: 1.5rem;
+        font-size: 1.5rem;
+    }
+    .featured {
+        margin-top: 4rem;
+    }
+    .order-action {
+        padding: 0.6rem 1rem;
+    }
+    .food-menu__categories {
+        gap: 1rem;
+    }
+    .find-store__title {
+        font-size: 2rem;
+    }
+    .find-store__img {
+        width: 18rem;
+    }
+}
+
+@media screen and (max-width: 576px) {
+    .find-store__submit {
+        width: 12rem;
+    }
+    .find-store__wrapper {
+        padding: 0 1rem;
+    }
+    .find-store__caption {
+        margin: 1rem 0;
+        font-size: 1rem;
+    }
+    .footer-content {
+        gap: 0;
+    }
+    .footer-list {
+        flex-basis: 50%;
+    }
+}
+
+@media screen and (max-width: 448px) {
+
+}
+
+@media screen and (max-width: 330px) {
+    .featured-avatar--mobile {
+        max-width: 22rem;
+    }
+    .featured-buttons {
+        gap: 2rem;
+    }
+    .featured-order__order {
+        padding: 1.5rem;
+    }
+}
