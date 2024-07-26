@@ -1,0 +1,211 @@
+@media screen and (max-width: 1400px) {
+}
+
+@media screen and (max-width: 1200px) {
+    .desktop-nav__search-bar {
+        width: 34rem;
+    }
+    .categories__wrapper {
+        justify-content: flex-start ;
+    }
+    .footer__wrapper {
+        flex-direction: column-reverse;
+    }
+    .footer-pic {
+        display: none;
+    }
+    .footer-pic--mobile {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        margin-bottom: 2.1rem;
+        flex-wrap: wrap;
+    }
+    .left__footer {
+        text-align: center;
+    }
+    .footer-address {
+        text-align: right;
+        margin: 2.1rem 0 4.2rem 0;
+    }
+    .footer__wrapper {
+        gap: 4rem;
+    }
+    .footer-pic__link {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+@media screen and (max-width: 992px) {
+    .desktop-nav__search-bar {
+        width: 24rem;
+    }
+    .main-board__img {
+        bottom: 4rem;
+    }
+}
+
+@media screen and (max-width: 768px) {
+    *,
+    *::after,
+    *::before {
+        cursor: default !important;
+    }
+    .desktop-nav__header {
+        display: none;
+    }
+    .desktop-nav__categories {
+        display: none;
+    }
+    .mobile-nav {
+        display: block;
+    }
+    .header {   
+        padding-bottom: 2rem;
+    }
+    .categorie-item__content {
+        text-align: center;
+    }
+    .categorie-item__title{
+        font-size: 1.2rem;
+        text-wrap: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        width: 7rem;
+    }
+    .categorie-item__avatar {
+        width: 7rem;
+    }
+    .categorie-item__img {
+        width: 70%;
+    }
+    .categorie-item {
+        height: 10rem;
+        background-color: #FAFAFA;
+    }
+    .special-offer__right {
+        width: 10rem;
+        margin-left: 0;
+    }
+    .special-offer__text {
+        font-size: 1.6rem;
+    }
+    .special-offer__time {
+        height: 3rem;
+    }
+    .special-offer__button {
+        gap: 0.4rem;
+        font-size: 1.2rem;
+    }
+    .special-offer__content {
+        padding: 1rem;
+        width: 12rem;
+    }
+    .special-offer__pic {
+        height: 10rem;
+    }
+    .special-offer__price {
+        padding: 0.5rem;
+        font-size: 1.4rem;
+    }
+    .special-offer__title {
+        font-family: "Peyda Regular";
+    }
+    .special-offer__right {
+        display: none;
+    }
+    .special-offer {
+        padding: 1rem;
+    }
+    .mobile-special {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1rem;
+        padding: 0 1rem;
+    }
+    .section-head__text {
+        font-size: 2.4rem;
+    }
+    .section-slider-item {
+        width: 16rem;
+    }
+    .main-board__title {
+        font-size: 2.4rem;
+    }
+    .main-board__caption {
+        font-family: "Peyda Regular";
+    }
+    .main-board__img {
+        bottom: 6rem;
+    }
+    .main-board-right__wrapper {
+        padding: 4rem;
+    }
+    .shop-attribute__text {
+        font-size: 1.6rem;
+    }
+    .newsletter__wrapper {
+        flex-direction: column;
+    }
+    .newletter-form {
+        margin-bottom: 4rem;
+    }
+    .brands__wrapper {
+        flex-wrap: nowrap;
+        overflow: scroll;
+        scrollbar-width: none;
+        justify-content: flex-start;
+    }
+    .right__footer {
+        flex-wrap: wrap;
+    }
+    .footer-pages__item {
+        margin-top: 2rem;
+    }
+    .footer {
+        margin-bottom: 8rem;
+    }
+}
+
+@media screen and (max-width: 576px) {
+}
+@media screen and (max-width: 476px) {
+    .mobile-nav__item-link {
+        font-size: 1.2rem;
+    }
+    .right__footer {
+        gap: 4rem;
+    }
+    .footer-list {
+        width: 14rem;
+    }
+    .question-item__text {
+        font-size: 1.2rem;
+    }
+    .question-item svg {
+        width: 2rem;
+        height: 2rem;
+    }
+}
+
+@media screen and (max-width: 448px) {
+    
+}
+
+@media screen and (max-width: 348px) {
+    .main-board__img {
+        left: 2rem;
+        bottom: 4rem;
+    }
+    .footer {
+        text-align: center;
+    }
+    .right__footer {
+        justify-content: center;
+    }
+    .footer-list {
+        width: auto;
+    }
+}

@@ -1,0 +1,24 @@
+@font-face {
+    font-family: "IRANSans";
+    src: url("../fonts/IRANSansWeb.ttf") format("trueType");
+}
+@font-face {
+    font-family: "IRANSans Bold";
+    src: url("../fonts/IRANSansWeb.ttf") format("trueType");
+}
+@font-face {
+    font-family: "Peyda Light";
+    src: url("../fonts/Peyda-Light.ttf") format("trueType");
+}
+@font-face {
+    font-family: "Peyda Regular";
+    src: url("../fonts/Peyda-Regular.ttf") format("trueType");
+}
+@font-face {
+    font-family: "Peyda Medium";
+    src: url("../fonts/Peyda-Medium.ttf") format("trueType");
+}
+@font-face {
+    font-family: "Peyda Bold";
+    src: url("../fonts/Peyda-Bold.ttf") format("trueType");
+}
