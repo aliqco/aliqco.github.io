@@ -298,33 +298,25 @@ class EmergencySystem {
                 this.bst.Root = BST.Delete(this.bst.Root, max.Id);
                 return `Request by ID ${max.Id} with Priority ${max.Priority} handled successfully.`;
             }
-            return `Request by ID ${foundNode.Data.Id} and ${foundNode.Data.Priority} handled successfully.`;
-        } else {
-            throw new Error("Request not found in BST.");
         }
     }
 
     UpdatePriority(requestId, newPriority) {
         let foundNode = BST.Search(this.bst.Root, requestId);
-        if (foundNode === null) {
-            return `Request with ID ${requestId} not found in BST.`;
+        if (foundNode === null && this.heap.FindIndex(requestId) === -1) {
+            return `Request with ID ${requestId} not found.`;
         }
-
-        if (this.heap.FindIndex(requestId) === -1) {
-            return `Request with ID ${requestId} not found in Heap.`;
-        }
-
 
         let oldPriority = foundNode.Data.Priority;
         foundNode.Data.Priority = newPriority;
         this.heap.heapInsert(newPriority, requestId);
 
-        return `Updated request ID ${requestId}: priority ${oldPriority} => ${newPriority}.`;
+        return `Priority of ID: ${requestId} successfully changed to ${newPriority} priority.`;
     }
 
     PrintAllRequests() {
         let result = BST.InOrder(this.bst.Root);
-        return result.trim() !== '' ? result.trim() : 'No requests found.';
+        return result.trim() !== '' ? result.trim() : 'There is no request in BST for inOrder print.';
     }
 
     PrintHeap() {
@@ -334,7 +326,8 @@ class EmergencySystem {
     TotalRequests() {
         return BST.BSTLen(this.bst.Root);
     }
-
+    
+    // d3 js for drawing tree
     ConvertToD3(node) {
         if (!node) return null;
 
@@ -369,26 +362,22 @@ function addRequest() {
     const description = document.querySelector('.request-desc-textarea').value;
 
     if (!name || !priority || !description) {
-        addLog('ERROR: All fields are required!');
+        addLog('All fields are required!');
         return;
     }
 
     if (priority < 1 || priority > 10) {
-        addLog('ERROR: Priority must be between 1 and 10!');
+        addLog('Priority must be between 1 to 10!');
         return;
     }
 
-    try {
-        const result = emergencySystem.AddRequest(name, new Date(), priority, description);
-        addLog(result);
-        renderBST();
+    const result = emergencySystem.AddRequest(name, new Date(), priority, description);
+    addLog(result);
+    renderBST();
 
-        document.querySelector('.request-name-input').value = '';
-        document.querySelector('.request-priority-input').value = '';
-        document.querySelector('.request-desc-textarea').value = '';
-    } catch (e) {
-        addLog(`ERROR! ${e.message}`);
-    }
+    document.querySelector('.request-name-input').value = '';
+    document.querySelector('.request-priority-input').value = '';
+    document.querySelector('.request-desc-textarea').value = '';
 }
 
 function updatePriority() {
@@ -396,31 +385,27 @@ function updatePriority() {
     const newPriority = parseInt(document.querySelector('.update-request-priority-input').value);
 
     if (!requestId || !newPriority) {
-        addLog('ERROR: ID and new priority are required!');
+        addLog('ID and new priority are required!');
         return;
     }
 
     if (newPriority < 1 || newPriority > 10) {
-        addLog('ERROR: Priority must be between 1 and 10!');
+        addLog('Priority must be between 1 and 10!');
         return;
     }
 
-    try {
-        const result = emergencySystem.UpdatePriority(requestId, newPriority);
-        addLog(result);
-        
-        document.querySelector('.update-request-id-input').value = '';
-        document.querySelector('.update-request-priority-input').value = '';
-    } catch (e) {
-        addLog(`ERROR! ${e.message}`);
-    }
+    const result = emergencySystem.UpdatePriority(requestId, newPriority);
+    addLog(result);
+    
+    document.querySelector('.update-request-id-input').value = '';
+    document.querySelector('.update-request-priority-input').value = '';
 }
 
 function searchRequest() {
     const searchId = parseInt(document.querySelector('.search-request-id-input').value);
 
     if (!searchId) {
-        addLog('ERROR: ID is required!');
+        addLog('ID is required!');
         return;
     }
 
@@ -432,7 +417,7 @@ function searchRequest() {
 function deleteRequest() {
     const delId = parseInt(document.querySelector('.del-request-id-input').value);
     if (!delId) {
-        addLog('ERROR: ID is required!');
+        addLog('ID is required!');
         return;
     }
 
@@ -483,7 +468,6 @@ function HeapSortPrint() {
     }
 }
 
-
 function clearLog() {
     document.querySelector('.log').textContent = '';
     alert('Cleared successfully.')
@@ -493,6 +477,8 @@ function clearLog() {
 function drawTree(BSTNodeData) {
     const container = document.querySelector(".BST-Tree");
     container.innerHTML = "";
+
+    
 
     const width = 800;
     const height = 600;
@@ -545,6 +531,14 @@ function renderBST() {
         drawTree(BSTNodeData);
 }
 
+function clearNodes() {
+    if (confirm("Are you sure to clear all requests?")) {
+        emergencySystem.bst.Root = null;
+        emergencySystem.heap = new MaxHeap(100);
+        document.querySelector(".BST-Tree").innerHTML = "";
+        renderBST();
+    }
+}
 
 // Test data
 function AddDefaultRequests() {
