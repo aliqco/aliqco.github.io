@@ -89,9 +89,9 @@
                 </div>
  
                 <div class="bg-gray-100 p-6 mt-12 rounded shadow border border-gray-300 flex flex-col items-center">
-                    <div class="text-center bg-gray-300 text-black rounded w-full p-2 mb-10 border border-gray-400 shadow hover:bg-black hover:text-white transition font-bold">
-                        Binary Search Tree
-                    </div>
+                    <button onclick="clearNodes()" class="text-center bg-red-500 text-white rounded w-full p-2 mb-10 border border-gray-400 shadow hover:bg-black hover:text-white transition font-bold">
+                        Clear all requests
+                    </button>
                     <div class="">
                         <div class="BST-Tree">
 
@@ -118,9 +118,9 @@
                     </h3>
                     <div class="space-y-3">
                         <input type="number" placeholder="Request ID"
-                               class="update-request-id-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                               class="update-request-id-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black">
                         <input type="number" placeholder="New Priority (1-10)" min="1" max="10"
-                               class="update-request-priority-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500">
+                               class="update-request-priority-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black">
                         <button onclick="updatePriority()" 
                                 class="w-full bg-black hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition">
                            Update Priority
@@ -134,7 +134,7 @@
                 </h3>
                 <div class="space-y-3">
                     <input type="number" placeholder="Request ID"
-                            class="search-request-id-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                            class="search-request-id-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500">
                     <button onclick="searchRequest()" 
                             class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">
                         Search Request
@@ -148,12 +148,28 @@
                 </h3>
                 <div class="space-y-3 mt-10">
                     <input type="number" placeholder="Request ID"
-                            class="del-request-id-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500">
+                            class="del-request-id-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500">
                     <button onclick="deleteRequest()" 
                             class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition">
                         Delete
                     </button>
                 </div>
+            </div>
+            <div>
+                <p>
+                    Check list:
+                </p>
+                <input type="checkbox">
+                <span>Test app</span>
+                <br>
+                <input type="checkbox">
+                <span>delete last node</span>
+                <br>
+                <input type="checkbox">
+                <span>text for delete a node with id</span>
+                <br>
+                <input type="checkbox">
+                <span>heap sort better</span>
             </div>
         </div>
     </div>  
