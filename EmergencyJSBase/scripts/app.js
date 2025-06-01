@@ -1,10 +1,6 @@
 
 // Request data class
 class Data {
-    static random = Math.random;
-    static usedIds = new Set();
-    static maxId = 1000;
-
     constructor(id, name, time, priority, description) {
         this.id = id;
         this.name = name;
@@ -42,9 +38,6 @@ class Data {
     }
 
     set Priority(value) {
-        if (value < 1 || value > 10) {
-            throw new Error("Priority must be between 1 and 10.");
-        }
         this.priority = value;
     }
 
@@ -54,16 +47,6 @@ class Data {
 
     set Description(value) {
         this.description = value;
-    }
-
-    static GenerateUniqueId() {
-        let newId;
-        do {
-            newId = Math.floor(Math.random() * Data.maxId) + 1;
-        } while (Data.usedIds.has(newId));
-
-        Data.usedIds.add(newId);
-        return newId;
     }
 
     toString() {
@@ -283,7 +266,7 @@ class EmergencySystem {
     }
 
     AddRequest(name, time, priority, description) {
-        let id = Data.GenerateUniqueId();
+        let id = Math.floor(Date.now() % (Math.random() * 10000));
         let request = new Data(id, name, time, priority, description);
 
         this.bst.Root = BST.Insert(this.bst.Root, request);
@@ -573,6 +556,12 @@ function AddDefaultRequests() {
         { name: "Jafar", time: currentDate, priority: 10, description: "Heart attack" },
         { name: "Yoones", time: currentDate, priority: 4, description: "Ear pain" },
         { name: "Karim", time: currentDate, priority: 8, description: "Accident" },
+        { name: "Morteza", time: currentDate, priority: 1, description: "Accident" },
+        { name: "Hakim", time: currentDate, priority: 5, description: "Accident" },
+        { name: "Sadegh", time: currentDate, priority: 2, description: "Virus" },
+        { name: "Ehsan", time: currentDate, priority: 3, description: "Accident" },
+        { name: "Naeim", time: currentDate, priority: 5, description: "Flu" },
+        { name: "Fateh", time: currentDate, priority: 1, description: "heartache" },
     ];
 
     defaultRequests.forEach(req => {
