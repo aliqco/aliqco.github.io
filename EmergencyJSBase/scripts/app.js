@@ -1,16 +1,19 @@
-class Data {
-  constructor(id, name, time, priority, description) {
-    this.id = id;
-    this.name = name;
-    this.time = time;
-    this.priority = priority;
-    this.description = description;
-  }
 
-  toString() {
-    return `[ID: ${this.id}, Name: ${this.name}, Time: ${this.time}, Priority: ${this.priority}, Description: ${this.description}]`;
-  }
+class Data {
+    constructor(id, name, time, priority, description) {
+        this.Id = id;
+        this.Name = name;
+        this.Time = time;
+        this.Priority = priority;
+        this.Description = description;
+    }
+
+    toString() {
+        return `[ID: ${this.Id}, Name: ${this.Name}, Time: ${this.Time}, Priority: ${this.Priority}, Description: ${this.Description}]`;
+    }
 }
+
+
 
 // BSTNode Class
 class BSTNode {
