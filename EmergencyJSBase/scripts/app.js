@@ -1,58 +1,15 @@
-
-// Request data class
 class Data {
+  constructor(id, name, time, priority, description) {
+    this.id = id;
+    this.name = name;
+    this.time = time;
+    this.priority = priority;
+    this.description = description;
+  }
 
-    constructor(id, name, time, priority, description) {
-        this.id = id;
-        this.name = name;
-        this.time = time;
-        this.priority = priority;
-        this.description = description;
-    }
-
-    get Id() {
-        return this.id;
-    }
-
-    set Id(value) {
-        this.id = value;
-    }
-
-    get Name() {
-        return this.name;
-    }
-
-    set Name(value) {
-        this.name = value;
-    }
-
-    get Time() {
-        return this.time;
-    }
-
-    set Time(value) {
-        this.time = value;
-    }
-
-    get Priority() {
-        return this.priority;
-    }
-
-    set Priority(value) {
-        this.priority = value;
-    }
-
-    get Description() {
-        return this.description;
-    }
-
-    set Description(value) {
-        this.description = value;
-    }
-
-    toString() {
-        return `[ID: ${this.Id}, Name: ${this.Name}, Time: ${this.Time}, Priority: ${this.Priority}, Description: ${this.Description}]`;
-    }
+  toString() {
+    return `[ID: ${this.id}, Name: ${this.name}, Time: ${this.time}, Priority: ${this.priority}, Description: ${this.description}]`;
+  }
 }
 
 // BSTNode Class
@@ -220,15 +177,22 @@ class MaxHeap {
     }
 
     HeapSort() {
+        const heapCopy = [...this.heap];
+        const heapIndexCopy = this.nextIndex;
+        let sorted = [];
         let size = this.nextIndex - 1;
         for (let i = size; i > 1; i--) {
             this.Swap(1, i);
             this.nextIndex--;
             this.adjust2Down(1);
         }
-        this.nextIndex = size + 1;
-        return this.heap.slice(1, size + 1);
+        sorted = this.heap.slice(1, size + 1);
+        this.heap = heapCopy;
+        this.nextIndex = heapIndexCopy;
+
+        return sorted;
     }
+
 
 
     GetPriority(id) {
@@ -326,6 +290,27 @@ class EmergencySystem {
     TotalRequests() {
         return BST.BSTLen(this.bst.Root);
     }
+
+    deleteRequest(id) {
+        let heapDelete = this.heap.RemoveById(id);
+        let bstDelete = BST.Search(this.bst.Root, id);
+        let bstDeleted = false;
+
+        if (bstDelete !== null) {
+            this.bst.Root = BST.Delete(this.bst.Root, id);
+            bstDeleted = true;
+        }
+
+        if (heapDelete && bstDeleted) {
+            addLog(`Request with ID ${id} deleted successfully from BST and Heap.`);
+            renderBST();
+            return true;
+        } else {
+            addLog(`Request with ID ${id} not found in BST or Heap.`);
+            return false;
+        }
+    }
+
     
     // d3 js for drawing tree
     ConvertToD3(node) {
@@ -414,19 +399,6 @@ function searchRequest() {
     document.querySelector('.search-request-id-input').value = '';
 }
 
-function deleteRequest() {
-    const delId = parseInt(document.querySelector('.del-request-id-input').value);
-    if (!delId) {
-        addLog('ID is required!');
-        return;
-    }
-
-    emergencySystem.bst.Root = BST.Delete(emergencySystem.bst.Root, delId);
-    emergencySystem.heap.RemoveById(delId);
-    document.querySelector('.del-request-id-input').value = '';
-    renderBST();
-}
-
 function handleHighPriorityRequest() {
     const result = emergencySystem.HandleHighPriorityRequest();
     addLog(result);
@@ -454,18 +426,12 @@ function printHeap() {
 }
 
 function HeapSortPrint() {
-    if (confirm('Are you sure to sort? its change the max heap structure!')) {
-        try {
-            let sortedHeap = emergencySystem.heap.HeapSort();
-            addLog('-- -- -- -- -- -- -- -- -- --');
-            sortedHeap.forEach(item => {
-                addLog(`ID: ${item.Id}, Priority: ${item.Priority}`);
-            });
-            addLog('-- -- -- -- -- -- -- -- -- --');
-        } catch (e) {
-            addLog(`ERROR: ${e.message}`);
-        }
-    }
+    let sortedHeap = emergencySystem.heap.HeapSort();
+    addLog('-- -- -- -- -- -- -- -- -- --');
+    sortedHeap.forEach(item => {
+        addLog(`ID: ${item.Id}, Priority: ${item.Priority}`);
+    });
+    addLog('-- -- -- -- -- -- -- -- -- --');
 }
 
 function clearLog() {
@@ -473,6 +439,22 @@ function clearLog() {
     alert('Cleared successfully.')
 }
 
+function clearInputs() {
+    document.querySelector('.request-name-input').value = '';
+    document.querySelector('.request-priority-input').value = '';
+    document.querySelector('.request-desc-textarea').value = '';
+}
+
+function deleteRequest() {
+    const delId = parseInt(document.querySelector('.del-request-id-input').value);
+    if (!delId) {
+        addLog('ID is required!');
+        return;
+    }
+    emergencySystem.deleteRequest(delId);
+    document.querySelector('.del-request-id-input').value = '';
+
+}
 // BST Draw methods
 function drawTree(BSTNodeData) {
     const container = document.querySelector(".BST-Tree");
@@ -526,6 +508,8 @@ function drawTree(BSTNodeData) {
 }
 
 function renderBST() {
+    const container = document.querySelector(".BST-Tree");
+    container.innerHTML = "";
     const BSTNodeData = emergencySystem.ConvertToD3(emergencySystem.bst.Root);
     if (BSTNodeData)
         drawTree(BSTNodeData);
@@ -565,3 +549,4 @@ function AddDefaultRequests() {
     renderBST();
 }
 window.addEventListener('load', AddDefaultRequests);
+
