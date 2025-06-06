@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Emergency Management System</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet" />
+  </head>
+
+  <style>
+    .node circle {
+      fill: #3b82f6;
+      cursor: pointer;
+      transition: all ease 200ms;
+    }
+
+    .node circle:hover {
+      fill: #b4b406;
+    }
+
+    .node text {
+      font: 12px sans-serif;
+      fill: white;
+      font-weight: normal;
+      cursor: pointer;
+    }
+
+    .link {
+      fill: none;
+      stroke: #888;
+      stroke-width: 2px;
+    }
+  </style>
+
+  <body class="bg-gray-100 h-screen">
+    <div class="container mx-auto px-4 py-8">
+      <!-- Header -->
+      <header class="text-center mb-8">
+        <h1 class="text-4xl font-bold mb-3 text-red-600">
+          Emergency Management System
+        </h1>
+        <a class="font-bold text-3xl text-blue-600" href="https://usb.ac.ir"
+          >Sistan and baluchestan university</a
+        >
+      </header>
+
+      <!-- Main -->
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <h2 class="text-2xl font-bold mb-6 text-gray-800">Add new request</h2>
+          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
+            <h3 class="text-lg font-semibold mb-4 text-blue-600">
+              Add New Request
+            </h3>
+            <div class="space-y-3">
+              <input
+                type="text"
+                placeholder="Enter name"
+                class="request-name-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" />
+              <select
+                class="select-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                <option value="-1">-- Select priority --</option>
+                <option value="4" class="bg-red-800 text-white">
+                  4 : High Emergency Request
+                </option>
+                <option
+                  value="3"
+                  style="background-color: oklch(64.6% 0.222 41.116)"
+                  class="text-white">
+                  3 : Medium Emergency Request
+                </option>
+                <option
+                  value="2"
+                  style="background-color: oklch(68.1% 0.162 75.834)"
+                  class="bg-red-400 text-white">
+                  2 : Normal Emergency Request
+                </option>
+                <option
+                  value="1"
+                  style="background-color: oklch(62.7% 0.194 149.214)"
+                  class="bg-red-300 text-white">
+                  1 : Low Emergency Request
+                </option>
+              </select>
+              <!-- <input
+                type="number"
+                placeholder="Priority (1-10)"
+                min="1"
+                max="10"
+                class="request-priority-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500" /> -->
+              <textarea
+                placeholder="Enter description"
+                rows="3"
+                class="request-desc-textarea w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"></textarea>
+              <button
+                onclick="handleAddRequest()"
+                class="transition w-full bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                Add Request
+              </button>
+              <button
+                onclick="handleClearInputs()"
+                class="bg-gray-600 text-white py-2 px-4 w-full rounded font-bold">
+                Clear inputs
+              </button>
+            </div>
+          </div>
+          <div class="border border-gray-300 py-2 px-4 rounded mt-6">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Infographic</h2>
+            <div class="bg-gray-900 p-4 rounded-lg overflow-y-auto">
+              <div class="grid grid-cols-2 gap-4">
+                <div class="bg-gray-700 rounded text-center cursor-pointer">
+                  <div class="total-req text-3xl font-bold text-green-400">
+                    0
+                  </div>
+                  <span class="font-semibold text-white block mt-1 mb-2"
+                    >Total requests</span
+                  >
+                </div>
+                <div class="bg-gray-700 rounded text-center cursor-pointer">
+                  <div class="high-req text-3xl font-bold text-red-500">
+                    salam
+                  </div>
+                  <span class="font-semibold text-white block mt-1 mb-2"
+                    >High priority requests</span
+                  >
+                </div>
+              </div>
+            </div>
+            <div class="space-y-3 mt-3">
+              <button
+                onclick="handleHighPriorityRequest()"
+                class="w-full bg-red-800 hover:bg-red-900 text-white font-semibold py-2 px-4 rounded">
+                Handle High Priority Request
+              </button>
+              <button
+                onclick="handlePrintInorderBST()"
+                class="transition w-full bg-purple-500 hover:bg-purple-700 text-white font-semibold py-2 px-4 rounded">
+                Show All Requests (InOrder)
+              </button>
+              <button
+                onclick="handlePrintInorderHeap()"
+                class="transition w-full bg-indigo-500 hover:bg-indigo-700 text-white font-semibold py-2 px-4 rounded">
+                Show Heap Array
+              </button>
+              <div>
+                <button
+                  onclick="handleHeapSortPrint()"
+                  class="transition w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded">
+                  Show heap sorted by priority
+                </button>
+              </div>
+              <div>
+                <button
+                  onclick="handleClearNodes()"
+                  class="transition w-full bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded">
+                  Clear all requests
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-lg shadow-lg p-6">
+          <div>
+            <div class="mb-6 mt-6 p-4 border border-gray-200 rounded-lg">
+              <h3 class="text-lg font-bold mb-4 text-orange-600">
+                Update Priority
+              </h3>
+              <div class="space-y-3">
+                <input
+                  type="number"
+                  placeholder="Request ID"
+                  class="update-request-id-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black" />
+                <select
+                  class="select-update-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  <option value="-1">-- Select new priority --</option>
+                  <option value="4" class="bg-red-800 text-white">
+                    4 : High Emergency Request
+                  </option>
+                  <option
+                    value="3"
+                    style="background-color: oklch(64.6% 0.222 41.116)"
+                    class="text-white">
+                    3 : Medium Emergency Request
+                  </option>
+                  <option
+                    value="2"
+                    style="background-color: oklch(68.1% 0.162 75.834)"
+                    class="bg-red-400 text-white">
+                    2 : Normal Emergency Request
+                  </option>
+                  <option
+                    value="1"
+                    style="background-color: oklch(62.7% 0.194 149.214)"
+                    class="bg-red-300 text-white">
+                    1 : Low Emergency Request
+                  </option>
+                </select>
+                <!-- <input
+                  type="number"
+                  placeholder="New Priority (1-10)"
+                  min="1"
+                  max="10"
+                  class="update-request-priority-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-black" /> -->
+                <button
+                  onclick="handleUpdatePriority()"
+                  class="w-full bg-black hover:bg-orange-700 text-white font-bold py-2 px-4 rounded transition">
+                  Update Priority
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
+            <h3 class="text-lg font-bold mb-4">Search Request</h3>
+            <div class="space-y-3">
+              <input
+                type="number"
+                placeholder="Request ID"
+                class="search-request-id-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-green-500" />
+              <button
+                onclick="handleSearchRequest()"
+                class="w-full bg-green-500 hover:bg-green-700 text-white font-bold py-2 px-4 rounded transition">
+                Search Request
+              </button>
+            </div>
+          </div>
+          <div class="mb-6 p-4 border border-gray-200 rounded-lg">
+            <h3 class="text-lg font-bold mb-4">Delete by ID</h3>
+            <div class="space-y-3 mt-10">
+              <input
+                type="number"
+                placeholder="Request ID"
+                class="del-request-id-input w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-red-500" />
+              <button
+                onclick="handleDeleteRequest()"
+                class="w-full bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded transition">
+                Delete
+              </button>
+            </div>
+          </div>
+          <div class="border border-gray-300 py-2 px-4 rounded mb-6">
+            <h2 class="text-2xl font-bold mb-6 text-gray-800">Log</h2>
+            <div
+              class="log bg-gray-900 p-4 rounded-lg font-mono h-96 overflow-y-auto"></div>
+            <button
+              onclick="handleClearLog()"
+              class="mt-4 bg-gray-500 hover:bg-gray-700 text-white font-bold py-2 px-4 rounded transition">
+              Clear Log
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="bg-white p-6 mt-12 rounded shadow border border-gray-300 flex flex-col items-center">
+        <p class="text-center font-bold text-2xl mb-6 bg-blue-500 shadow w-full p-2 rounded text-white">
+          Binary search tree
+        </p>
+        <div>
+          <div class="BST-Tree"></div>
+        </div>
+      </div>
+    </div>
+    <script src="scripts/app.js"></script>
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+  </body>
+</html>
