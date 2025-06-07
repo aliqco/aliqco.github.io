@@ -333,17 +333,17 @@ class EmergencySystem {
   ConvertToD3(node) {
     if (!node) return null;
 
-    let obj = {
+    let d3 = {
       id: `${node.Data.Id}`,
       priority: `${node.Data.Priority}`,
       children: [],
     };
 
-    if (node.left) obj.children.push(this.ConvertToD3(node.left));
-    if (node.right) obj.children.push(this.ConvertToD3(node.right));
+    if (node.left) d3.children.push(this.ConvertToD3(node.left));
+    if (node.right) d3.children.push(this.ConvertToD3(node.right));
 
-    if (obj.children.length === 0) delete obj.children;
-    return obj;
+    if (d3.children.length === 0) delete d3.children;
+    return d3;
   }
 }
 
