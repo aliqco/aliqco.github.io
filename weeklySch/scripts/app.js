@@ -1,4 +1,4 @@
-/* ========== LocalStorage ========== */
+// ========== LocalStorage ==========
 const STORAGE_KEY = "universityScheduleData";
 const CLIPBOARD_KEY = "universityClipboard";
 const FIRST_VISIT_KEY = "firstVisit";
@@ -16,7 +16,7 @@ function saveToStorage(data) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-/* ========== Clipboard ========== */
+// ========== Clipboard ==========
 let clipboard = (() => {
   try {
     return JSON.parse(localStorage.getItem(CLIPBOARD_KEY) || "null");
@@ -29,7 +29,7 @@ function saveClipboard(data) {
   localStorage.setItem(CLIPBOARD_KEY, JSON.stringify(data));
 }
 
-/* ========== Render ========== */
+// ========== Render ==========
 function renderSavedClasses() {
   const saved = loadFromStorage();
   document.querySelectorAll(".class-cell").forEach((cell) => {
@@ -39,7 +39,7 @@ function renderSavedClasses() {
   });
 }
 
-/* ========== Cell Fill / Clear ========== */
+// ========== Cell Fill / Clear ==========
 function fillCell(cell, subject, exam, room) {
   cell.querySelector(".subject").textContent = subject;
   cell.querySelector(".exam").textContent = `امتحان: ${exam}`;
@@ -71,7 +71,7 @@ function clearCell(cell) {
   }
 }
 
-/* ========== Overlay (حذف / ویرایش / کپی) ========== */
+// ========== Overlay (حذف / ویرایش / کپی) ==========
 function addOverlay(cell) {
   removeOverlay(cell);
   cell.querySelectorAll(".delete-btn").forEach((b) => b.remove());
@@ -132,7 +132,7 @@ function removeOverlay(cell) {
   cell.querySelectorAll(".cell-overlay").forEach((o) => o.remove());
 }
 
-/* ========== Paste Button for Empty Cells ========== */
+// ========== Paste Button for Empty Cells ==========
 function addPasteButton(cell) {
   if (cell.classList.contains("has-class")) return;
   if (cell.querySelector(".paste-empty-btn")) return;
@@ -154,7 +154,7 @@ function removePasteButton(cell) {
   cell.querySelectorAll(".paste-empty-btn").forEach((b) => b.remove());
 }
 
-/* ========== Modal ========== */
+// ========== Modal ==========
 let currentCell = null;
 const modal = document.getElementById("classModal");
 const form = document.getElementById("classForm");
@@ -194,7 +194,7 @@ form.addEventListener("submit", (e) => {
   }
 });
 
-/* ========== Drag & Drop ========== */
+// ========== Drag & Drop ==========
 function makeDraggable(cell) {
   cell.draggable = true;
   cell.addEventListener("dragstart", (e) => {
@@ -240,7 +240,7 @@ document.querySelectorAll(".class-cell").forEach((target) => {
   });
 });
 
-/* ========== Hover FX ========== */
+// ========== Hover FX ==========
 document.querySelectorAll(".class-cell").forEach((c) => {
   c.addEventListener(
     "mouseenter",
@@ -249,7 +249,7 @@ document.querySelectorAll(".class-cell").forEach((c) => {
   c.addEventListener("mouseleave", () => (c.style.transform = "translateY(0)"));
 });
 
-/* ========== Init ========== */
+// ========== Init ==========
 renderSavedClasses();
 document.querySelectorAll(".class-cell").forEach((c) => {
   addOverlay(c);
@@ -445,6 +445,14 @@ function renderTodos() {
 
     todoList.appendChild(li);
   });
+  
+  // Add fade-in animation to todo items
+  document.querySelectorAll(".todo-item").forEach((item, index) => {
+    item.classList.add("fade-in", `fade-in-delay-${(index % 4) + 1}`);
+    if (isInViewport(item)) {
+      item.classList.add("visible");
+    }
+  });
 }
 
 todoForm.addEventListener("submit", (e) => {
@@ -459,7 +467,7 @@ todoForm.addEventListener("submit", (e) => {
 
 renderTodos();
 
-/* ========== تاریخ و زمان شمسی ========== */
+// ========== تاریخ و زمان شمسی ==========
 function updateDateTime() {
   const now = new Date();
   const options = {
@@ -478,7 +486,7 @@ function updateDateTime() {
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
-/* ========== تایمر پومودورو - طراحی جدید با ویژگی‌های جدید ========== */
+// ========== تایمر پومودورو - طراحی جدید با ویژگی‌های جدید ==========
 let pomodoroInterval = null;
 // مقداردهی اولیه با استفاده از تنظیمات ذخیره شده
 const initialSettings = loadPomodoroSettings();
@@ -734,7 +742,7 @@ updatePomodoroDisplay();
 updatePomodoroStats();
 resetDailyStats();
 
-/* ========== نوتیفیکشن سفارشی ========== */
+// ========== نوتیفیکشن سفارشی ==========
 const notificationBar = document.getElementById("notificationBar");
 const notificationMessage = document.getElementById("notificationMessage");
 const notificationClose = document.getElementById("notificationClose");
@@ -752,7 +760,7 @@ notificationClose.addEventListener("click", () => {
   notificationBar.classList.remove("show");
 });
 
-/* ========== نوتیفیکشن کلاس ========== */
+// ========== نوتیفیکشن کلاس ==========
 function getCurrentTimeSlot() {
   const now = new Date();
   const hours = now.getHours();
@@ -858,3 +866,50 @@ window.addEventListener("load", () => {
   showClassNotification();
   updateNotificationIconVisibility();
 });
+
+// ========== Fade-in Animations ==========
+function isInViewport(element) {
+  const rect = element.getBoundingClientRect();
+  return (
+    rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.8 &&
+    rect.bottom >= 0
+  );
+}
+
+function checkVisibility() {
+  const elements = document.querySelectorAll('.fade-in, .schedule-wrapper, .todo-sidebar, .pomodoro-container, .pomodoro-stats, .todo-item');
+  
+  elements.forEach(element => {
+    if (isInViewport(element)) {
+      element.classList.add('visible');
+    }
+  });
+}
+
+// Initial check on page load
+document.addEventListener('DOMContentLoaded', () => {
+  // Add staggered animation to table rows
+  const tableRows = document.querySelectorAll('.schedule-table tbody tr');
+  tableRows.forEach((row, index) => {
+    row.style.transitionDelay = `${index * 0.1}s`;
+  });
+  
+  // Check visibility after a short delay to ensure CSS is applied
+  setTimeout(checkVisibility, 100);
+});
+
+// Check visibility on scroll
+window.addEventListener('scroll', () => {
+  // Throttle scroll events for performance
+  if (!window.scrollTimeout) {
+    window.scrollTimeout = setTimeout(() => {
+      checkVisibility();
+      window.scrollTimeout = null;
+    }, 50);
+  }
+});
+
+// Check visibility when window is resized
+window.addEventListener('resize', checkVisibility);
+
+
