@@ -592,9 +592,8 @@ tr:last-child .day-header {
   font-family: "Vazirmatn", sans-serif;
   max-height: 500px;
   overflow-y: auto;
-  -ms-overflow-style: none;  /* IE و Edge قدیمی */
-  scrollbar-width: none;     /* Firefox */
-  
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .todo-sidebar::-webkit-scrollbar {
@@ -602,20 +601,6 @@ tr:last-child .day-header {
   height: 0;
   display: none;
 }
-/* 
-.todo-sidebar::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 4px;
-}
-
-.todo-sidebar::-webkit-scrollbar-thumb {
-  background: rgba(52, 152, 219, 0.5);
-  border-radius: 4px;
-}
-
-.todo-sidebar::-webkit-scrollbar-thumb:hover {
-  background: rgba(52, 152, 219, 0.7);
-} */
 
 .todo-sidebar h2 {
   color: #fff;
@@ -1529,6 +1514,90 @@ tr:last-child .day-header {
 
 .achievement:hover .achievement-tooltip {
   opacity: 1;
+}
+
+/* Fade-in animations */
+.fade-in {
+  opacity: 0;
+  transform: translateY(20px);
+  transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+}
+
+.fade-in.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.fade-in-delay-1 {
+  transition-delay: 0.1s;
+}
+
+.fade-in-delay-2 {
+  transition-delay: 0.2s;
+}
+
+.fade-in-delay-3 {
+  transition-delay: 0.3s;
+}
+
+.fade-in-delay-4 {
+  transition-delay: 0.4s;
+}
+
+.schedule-wrapper {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.8s ease-out, transform 0.8s ease-out;
+}
+
+.schedule-wrapper.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.todo-sidebar {
+  opacity: 0;
+  transform: translateX(30px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.todo-sidebar.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.pomodoro-container {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.pomodoro-container.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.pomodoro-stats {
+  opacity: 0;
+  transform: translateY(30px);
+  transition: opacity 0.7s ease-out, transform 0.7s ease-out;
+}
+
+.pomodoro-stats.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+
+.todo-item {
+  opacity: 0;
+  transform: translateY(15px);
+  transition: opacity 0.4s ease-out, transform 0.4s ease-out;
+}
+
+.todo-item.visible {
+  opacity: 1;
+  transform: translateY(0);
 }
 
 @media (max-width: 768px) {
