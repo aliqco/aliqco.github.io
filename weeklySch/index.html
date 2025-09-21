@@ -2,18 +2,28 @@
 <html lang="fa" dir="rtl">
   <head>
     <meta charset="UTF-8" />
-<!--     <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
+    <!-- <meta name="viewport" content="width=device-width, initial-scale=1.0" /> -->
     <link rel="stylesheet" href="styles/app.css" />
     <title>برنامه کلاسی</title>
   </head>
   <body>
-    <!-- نوتیفیکشن بار سفارشی -->
+    <div id="welcomeModal" class="modal">
+      <div class="modal-content">
+        <span id="welcomeModalClose" class="close">&times;</span>
+        <h2 style="color: #fff; margin-bottom: 20px; text-align: center">
+          سلام و درود!
+        </h2>
+        <p style="color: #ddd; text-align: center; line-height: 1.6">
+          تمام اطلاعات شما در این صفحه تنها در مرورگر شما ذخیره می‌شود و ما هیچ دسترسی به اطلاعات شما نداریم، لذا در صورت پاک کردن داده‌های مرورگر خود، تمام اطلاعات ذخیره شده حذف خواهند شد.
+        </p>
+      </div>
+    </div>
+
     <div class="notification-bar" id="notificationBar">
       <span id="notificationMessage"></span>
       <button class="notification-close" id="notificationClose">×</button>
     </div>
 
-    <!-- آیکون نوتیفیکیشن -->
     <div
       class="notification-icon"
       id="notificationIcon"
@@ -26,17 +36,32 @@
           <thead>
             <tr class="time-header-row">
               <th class="time-header-cell">ساعت کلاسی</th>
-              <th class="time-header-cell">۷:۳۰ - ۹:۳۰</th>
-              <th class="time-header-cell">۹:۳۰ - ۱۱:۳۰</th>
-              <th class="time-header-cell">۱۳ - ۱۵</th>
-              <th class="time-header-cell">۱۵ - ۱۷</th>
-              <th class="time-header-cell">۱۸ - ۲۰</th>
+              <th class="time-header-cell">
+                <span>۷:۳۰ - ۹:۳۰</span>
+                <button class="edit-time-btn" title="ویرایش ساعت">✎</button>
+              </th>
+              <th class="time-header-cell">
+                <span>۹:۳۰ - ۱۱:۳۰</span>
+                <button class="edit-time-btn" title="ویرایش ساعت">✎</button>
+              </th>
+              <th class="time-header-cell">
+                <span>۱۳ - ۱۵</span>
+                <button class="edit-time-btn" title="ویرایش ساعت">✎</button>
+              </th>
+              <th class="time-header-cell">
+                <span>۱۵ - ۱۷</span>
+                <button class="edit-time-btn" title="ویرایش ساعت">✎</button>
+              </th>
+              <th class="time-header-cell">
+                <span>۱۸ - ۲۰</span>
+                <button class="edit-time-btn" title="ویرایش ساعت">✎</button>
+              </th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td class="day-header">شنبه</td>
-              <td class="class-cell" data-day="شنبه" data-time="7:30-9:30">
+              <td class="class-cell" data-day="شنبه" data-time="۷:۳۰ - ۹:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -45,7 +70,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="شنبه" data-time="9:30-11:30">
+              <td class="class-cell" data-day="شنبه" data-time="۹:۳۰ - ۱۱:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -54,7 +79,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="شنبه" data-time="13-15">
+              <td class="class-cell" data-day="شنبه" data-time="۱۳ - ۱۵">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -63,7 +88,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="شنبه" data-time="15-17">
+              <td class="class-cell" data-day="شنبه" data-time="۱۵ - ۱۷">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -72,7 +97,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="شنبه" data-time="18-20">
+              <td class="class-cell" data-day="شنبه" data-time="۱۸ - ۲۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -84,7 +109,7 @@
             </tr>
             <tr>
               <td class="day-header">یک‌شنبه</td>
-              <td class="class-cell" data-day="یک‌شنبه" data-time="7:30-9:30">
+              <td class="class-cell" data-day="یک‌شنبه" data-time="۷:۳۰ - ۹:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -93,7 +118,10 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="یک‌شنبه" data-time="9:30-11:30">
+              <td
+                class="class-cell"
+                data-day="یک‌شنبه"
+                data-time="۹:۳۰ - ۱۱:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -102,7 +130,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="یک‌شنبه" data-time="13-15">
+              <td class="class-cell" data-day="یک‌شنبه" data-time="۱۳ - ۱۵">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -111,7 +139,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="یک‌شنبه" data-time="15-17">
+              <td class="class-cell" data-day="یک‌شنبه" data-time="۱۵ - ۱۷">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -120,7 +148,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="یک‌شنبه" data-time="18-20">
+              <td class="class-cell" data-day="یک‌شنبه" data-time="۱۸ - ۲۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -132,7 +160,7 @@
             </tr>
             <tr>
               <td class="day-header">دوشنبه</td>
-              <td class="class-cell" data-day="دوشنبه" data-time="7:30-9:30">
+              <td class="class-cell" data-day="دوشنبه" data-time="۷:۳۰ - ۹:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -141,7 +169,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="دوشنبه" data-time="9:30-11:30">
+              <td class="class-cell" data-day="دوشنبه" data-time="۹:۳۰ - ۱۱:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -150,7 +178,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="دوشنبه" data-time="13-15">
+              <td class="class-cell" data-day="دوشنبه" data-time="۱۳ - ۱۵">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -159,7 +187,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="دوشنبه" data-time="15-17">
+              <td class="class-cell" data-day="دوشنبه" data-time="۱۵ - ۱۷">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -168,7 +196,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="دوشنبه" data-time="18-20">
+              <td class="class-cell" data-day="دوشنبه" data-time="۱۸ - ۲۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -180,7 +208,7 @@
             </tr>
             <tr>
               <td class="day-header">سه‌شنبه</td>
-              <td class="class-cell" data-day="سه‌شنبه" data-time="7:30-9:30">
+              <td class="class-cell" data-day="سه‌شنبه" data-time="۷:۳۰ - ۹:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -189,7 +217,10 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="سه‌شنبه" data-time="9:30-11:30">
+              <td
+                class="class-cell"
+                data-day="سه‌شنبه"
+                data-time="۹:۳۰ - ۱۱:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -198,7 +229,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="سه‌شنبه" data-time="13-15">
+              <td class="class-cell" data-day="سه‌شنبه" data-time="۱۳ - ۱۵">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -207,7 +238,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="سه‌شنبه" data-time="15-17">
+              <td class="class-cell" data-day="سه‌شنبه" data-time="۱۵ - ۱۷">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -216,7 +247,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="سه‌شنبه" data-time="18-20">
+              <td class="class-cell" data-day="سه‌شنبه" data-time="۱۸ - ۲۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -228,7 +259,10 @@
             </tr>
             <tr>
               <td class="day-header">چهارشنبه</td>
-              <td class="class-cell" data-day="چهارشنبه" data-time="7:30-9:30">
+              <td
+                class="class-cell"
+                data-day="چهارشنبه"
+                data-time="۷:۳۰ - ۹:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -237,7 +271,10 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="چهارشنبه" data-time="9:30-11:30">
+              <td
+                class="class-cell"
+                data-day="چهارشنبه"
+                data-time="۹:۳۰ - ۱۱:۳۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -246,7 +283,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="چهارشنبه" data-time="13-15">
+              <td class="class-cell" data-day="چهارشنبه" data-time="۱۳ - ۱۵">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -255,7 +292,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="چهارشنبه" data-time="15-17">
+              <td class="class-cell" data-day="چهارشنبه" data-time="۱۵ - ۱۷">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -264,7 +301,7 @@
                 </div>
                 <button class="delete-btn">×</button>
               </td>
-              <td class="class-cell" data-day="چهارشنبه" data-time="18-20">
+              <td class="class-cell" data-day="چهارشنبه" data-time="۱۸ - ۲۰">
                 <div class="add-class-btn">+</div>
                 <div class="class-content">
                   <div class="class-part subject"></div>
@@ -278,87 +315,160 @@
         </table>
       </div>
 
-      <section class="todo-sidebar fade-in">
-        <h2 class="section-title">لیست کارها</h2>
+      <section class="main-sec">
+        <div class="main-right">
+          <div class="todo-sidebar fade-in">
+            <h2 class="section-title">افزودن کار جدید</h2>
 
-        <!-- فرم افزودن -->
-        <form class="todo-form">
-          <input
-            type="text"
-            id="todoInput"
-            placeholder="کار جدید ..."
-            required />
-          <button type="submit">+</button>
-        </form>
+            <form class="todo-form">
+              <div class="todo-input-group">
+                <input
+                  type="text"
+                  id="todoInput"
+                  placeholder="در مورد کارت بنویس..."
+                  required />
+              </div>
 
-        <!-- لیست کارها -->
-        <ul id="todoList"></ul>
+              <div class="todo-meta-inputs">
+                <div class="form-field">
+                  <label for="todoCategory">دسته‌بندی:</label>
+                  <select id="todoCategory" class="todo-select">
+                    <option value="work">کار</option>
+                    <option value="study">تحصیلی</option>
+                    <option value="personal">شخصی</option>
+                    <option value="shopping">خرید</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="todoImportance">اولویت:</label>
+                  <select id="todoImportance" class="todo-select">
+                    <option value="low">کم</option>
+                    <option value="medium">متوسط</option>
+                    <option value="high">زیاد</option>
+                    <option value="critical">خیلی زیاد</option>
+                  </select>
+                </div>
+              </div>
+              <button type="submit" class="todo-submit-btn">افزودن کار</button>
+            </form>
+          </div>
+          <div class="todo-sidebar2 fade-in">
+            <div class="todo-footer">
+              <h2 class="section-title">لیست کارها</h2>
+              <div class="todo-filters">
+                <div class="filter-section">
+                  <div class="filter-group">
+                    <button class="filter-btn active" data-filter="all">
+                      همه
+                    </button>
+                    <button class="filter-btn" data-filter="active">
+                      انجام نشده
+                    </button>
+                    <button class="filter-btn" data-filter="completed">
+                      انجام شده
+                    </button>
+                  </div>
+                  <div>
+                    <button class="clear-todo-btn">پاک کردن تمام کارها</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="category-filter-section">
+              <select id="categoryFilter" class="todo-select">
+                <option value="all">همه دسته‌ها</option>
+                <option value="work">کار</option>
+                <option value="study">تحصیلی</option>
+                <option value="personal">شخصی</option>
+                <option value="shopping">خرید</option>
+              </select>
+            </div>
+            <div class="empty-todo empty-todo-invisible">
+              لیست کارها خالی است!
+            </div>
+            <ul id="todoList"></ul>
+          </div>
+        </div>
+        <div class="pomodoro-container fade-in">
+          <h2 class="section-title">تایمر پومودورو</h2>
+          <div class="pomodoro-major">
+            <div class="pomodoro-circle">
+              <svg>
+                <circle class="bg-circle" cx="110" cy="110" r="90" />
+                <circle
+                  id="progress-circle"
+                  class="progress-circle"
+                  cx="110"
+                  cy="110"
+                  r="90" />
+              </svg>
+              <div class="pomodoro-display" id="pomodoroDisplay">25:00</div>
+            </div>
+            <div class="pomodoro-mode" id="pomodoroMode">کار</div>
+            <div class="pomodoro-controls">
+              <button
+                class="pomodoro-btn"
+                id="pomodoroStart"
+                title="شروع تایمر">
+                <svg
+                  style="width: 34px; height: 34px; text-align: center"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="size-2">
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
+                    clip-rule="evenodd" />
+                </svg>
+
+                <span class="pomodoro-tooltip">شروع تایمر</span>
+              </button>
+              <button
+                class="pomodoro-btn"
+                id="pomodoroReset"
+                title="تنظیم مجدد">
+                <svg
+                  style="width: 34px; height: 34px; text-align: center"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="size-6">
+                  <path
+                    fill-rule="evenodd"
+                    d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z"
+                    clip-rule="evenodd" />
+                </svg>
+
+                <span class="pomodoro-tooltip">تنظیم مجدد</span>
+              </button>
+              <button
+                class="pomodoro-btn settings"
+                id="pomodoroSettings"
+                title="تنظیمات">
+                <svg
+                  style="width: 34px; height: 34px; text-align: center"
+                  viewBox="0 0 24 24"
+                  fill="currentColor"
+                  class="size-6">
+                  <path
+                    fill-rule="evenodd"
+                    d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 0 0-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 0 0-2.282.819l-.922 1.597a1.875 1.875 0 0 0 .432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 0 0 0 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 0 0-.432 2.385l.923 1.597a1.875 1.875 0 0 0 2.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 0 0 2.28-.819l.923-1.597a1.875 1.875 0 0 0-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 0 0 0-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 0 0-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 0 0-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 0 0-1.85-1.567h-1.843ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z"
+                    clip-rule="evenodd" />
+                </svg>
+
+                <span class="pomodoro-tooltip">تنظیمات</span>
+              </button>
+            </div>
+          </div>
+          <div class="pomodoro-footer">
+            <span class="pomodoro-info">
+              روش پومودورو یک روش مدیریت زمانه که توسط فرانچسکو سیریلو در دهه‌ی
+              ۸۰ میلادی معرفی شد. ایده‌ی اصلیش اینه که تمرکز رو در بازه‌های
+              کوتاه و مشخص حفظ کنی و بعدش استراحت کوتاه داشته باشی.
+            </span>
+            <div class="datetime-display" id="datetimeDisplay"></div>
+          </div>
+        </div>
       </section>
-
-      <div class="pomodoro-container fade-in">
-        <h2 class="section-title">تایمر پومودورو</h2>
-        <div class="pomodoro-circle">
-          <svg>
-            <circle class="bg-circle" cx="110" cy="110" r="90" />
-            <circle
-              id="progress-circle"
-              class="progress-circle"
-              cx="110"
-              cy="110"
-              r="90" />
-          </svg>
-          <div class="pomodoro-display" id="pomodoroDisplay">25:00</div>
-        </div>
-        <div class="pomodoro-mode" id="pomodoroMode">کار</div>
-        <div class="pomodoro-controls">
-          <button class="pomodoro-btn" id="pomodoroStart" title="شروع تایمر">
-            <svg
-              style="width: 34px; height: 34px; text-align: center"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="size-2">
-              <path
-                fill-rule="evenodd"
-                d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z"
-                clip-rule="evenodd" />
-            </svg>
-
-            <span class="pomodoro-tooltip">شروع تایمر</span>
-          </button>
-          <button class="pomodoro-btn" id="pomodoroReset" title="تنظیم مجدد">
-            <svg
-              style="width: 34px; height: 34px; text-align: center"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="size-6">
-              <path
-                fill-rule="evenodd"
-                d="M4.755 10.059a7.5 7.5 0 0 1 12.548-3.364l1.903 1.903h-3.183a.75.75 0 1 0 0 1.5h4.992a.75.75 0 0 0 .75-.75V4.356a.75.75 0 0 0-1.5 0v3.18l-1.9-1.9A9 9 0 0 0 3.306 9.67a.75.75 0 1 0 1.45.388Zm15.408 3.352a.75.75 0 0 0-.919.53 7.5 7.5 0 0 1-12.548 3.364l-1.902-1.903h3.183a.75.75 0 0 0 0-1.5H2.984a.75.75 0 0 0-.75.75v4.992a.75.75 0 0 0 1.5 0v-3.18l1.9 1.9a9 9 0 0 0 15.059-4.035.75.75 0 0 0-.53-.918Z"
-                clip-rule="evenodd" />
-            </svg>
-
-            <span class="pomodoro-tooltip">تنظیم مجدد</span>
-          </button>
-          <button
-            class="pomodoro-btn settings"
-            id="pomodoroSettings"
-            title="تنظیمات">
-            <svg
-              style="width: 34px; height: 34px; text-align: center"
-              viewBox="0 0 24 24"
-              fill="currentColor"
-              class="size-6">
-              <path
-                fill-rule="evenodd"
-                d="M11.078 2.25c-.917 0-1.699.663-1.85 1.567L9.05 4.889c-.02.12-.115.26-.297.348a7.493 7.493 0 0 0-.986.57c-.166.115-.334.126-.45.083L6.3 5.508a1.875 1.875 0 0 0-2.282.819l-.922 1.597a1.875 1.875 0 0 0 .432 2.385l.84.692c.095.078.17.229.154.43a7.598 7.598 0 0 0 0 1.139c.015.2-.059.352-.153.43l-.841.692a1.875 1.875 0 0 0-.432 2.385l.922 1.597a1.875 1.875 0 0 0 2.282.818l1.019-.382c.115-.043.283-.031.45.082.312.214.641.405.985.57.182.088.277.228.297.35l.178 1.071c.151.904.933 1.567 1.85 1.567h1.844c.916 0 1.699-.663 1.85-1.567l.178-1.072c.02-.12.114-.26.297-.349.344-.165.673-.356.985-.57.167-.114.335-.125.45-.082l1.02.382a1.875 1.875 0 0 0 2.28-.819l.923-1.597a1.875 1.875 0 0 0-.432-2.385l-.84-.692c-.095-.078-.17-.229-.154-.43a7.614 7.614 0 0 0 0-1.139c-.016-.2.059-.352.153-.43l.84-.692c.708-.582.891-1.59.433-2.385l-.922-1.597a1.875 1.875 0 0 0-2.282-.818l-1.02.382c-.114.043-.282.031-.449-.083a7.49 7.49 0 0 0-.985-.57c-.183-.087-.277-.227-.297-.348l-.179-1.072a1.875 1.875 0 0 0-1.85-1.567h-1.843ZM12 15.75a3.75 3.75 0 1 0 0-7.5 3.75 3.75 0 0 0 0 7.5Z"
-                clip-rule="evenodd" />
-            </svg>
-
-            <span class="pomodoro-tooltip">تنظیمات</span>
-          </button>
-        </div>
-        <div class="datetime-display" id="datetimeDisplay"></div>
-      </div>
 
       <div class="pomodoro-stats fade-in">
         <button class="clear-stats-btn" id="clearStatsBtn">
@@ -383,7 +493,7 @@
           </div>
           <div class="stat-item">
             <div class="stat-value" id="todayMinutes">0</div>
-            <div class="stat-label">دقیقه مطالعه</div>
+            <div class="stat-label">مدت مطالعه</div>
           </div>
         </div>
         <div class="achievements">
@@ -403,7 +513,6 @@
       </div>
     </div>
 
-    <!-- Modal for adding class -->
     <div id="classModal" class="modal">
       <div class="modal-content">
         <span class="close">&times;</span>
@@ -417,7 +526,7 @@
               type="text"
               id="subjectName"
               name="subjectName"
-              placeholder="مثال: ریاضیات" />
+              placeholder="مثال: برنامه‌سازی پیشرفته" />
           </div>
           <div class="form-group">
             <label for="examDate">روز امتحان:</label>
@@ -440,7 +549,6 @@
       </div>
     </div>
 
-    <!-- مودال تنظیمات پومودورو -->
     <div id="pomodoroSettingsModal" class="pomodoro-settings-modal">
       <div class="pomodoro-settings-content">
         <span
@@ -472,8 +580,6 @@
       </div>
     </div>
 
-    <!-- اسکریپت کامل -->
     <script src="scripts/app.js"></script>
   </body>
 </html>
-
