@@ -2,19 +2,12 @@
 const STORAGE_KEY = "universityScheduleData";
 const CLIPBOARD_KEY = "universityClipboard";
 const FIRST_VISIT_KEY = "firstVisit";
+const WELCOME_KEY = "hasVisited";
 const POMODORO_SETTINGS_KEY = "pomodoroSettings";
 const POMODORO_STATS_KEY = "pomodoroStats";
-
-function loadFromStorage() {
-  try {
-    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-  } catch {
-    return {};
-  }
-}
-function saveToStorage(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-}
+const TODO_KEY = "todoList";
+const POMODORO_STATE_KEY = "pomodoroState";
+const TIME_SLOTS_KEY = "scheduleTimeSlots"; // Key to save the edited times
 
 // ========== Clipboard ==========
 let clipboard = (() => {
@@ -30,6 +23,17 @@ function saveClipboard(data) {
 }
 
 // ========== Render ==========
+function loadFromStorage() {
+  try {
+    return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+  } catch {
+    return {};
+  }
+}
+function saveToStorage(data) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+}
+
 function renderSavedClasses() {
   const saved = loadFromStorage();
   document.querySelectorAll(".class-cell").forEach((cell) => {
@@ -249,25 +253,32 @@ document.querySelectorAll(".class-cell").forEach((c) => {
   c.addEventListener("mouseleave", () => (c.style.transform = "translateY(0)"));
 });
 
-// ========== Init ==========
-renderSavedClasses();
-document.querySelectorAll(".class-cell").forEach((c) => {
-  addOverlay(c);
-  addPasteButton(c);
-});
-
+// ========== Todo Section ==========
 const todoForm = document.querySelector(".todo-form");
 const todoInput = document.getElementById("todoInput");
+const todoCategory = document.getElementById("todoCategory");
+const todoImportance = document.getElementById("todoImportance");
 const todoList = document.getElementById("todoList");
-const TODO_KEY = "todoList";
+const categoryFilter = document.getElementById("categoryFilter");
 
 let todos = JSON.parse(localStorage.getItem(TODO_KEY) || "[]");
 let currentEditIndex = -1;
+let currentFilter = "all";
+let currentCategory = "all";
 
 function saveTodos() {
   localStorage.setItem(TODO_KEY, JSON.stringify(todos));
 }
 
+function emptyTodos() {
+  if (todos.length === 0) {
+    document
+      .querySelector(".empty-todo")
+      .classList.remove("empty-todo-invisible");
+  } else {
+    document.querySelector(".empty-todo").classList.add("empty-todo-invisible");
+  }
+}
 function formatDateTime() {
   const now = new Date();
   const options = { weekday: "long", hour: "2-digit", minute: "2-digit" };
@@ -280,7 +291,6 @@ function formatDateTime() {
   return `${persianDate} - ${timeStr}`;
 }
 
-/* ========== توابع افکت‌های جدید برای تسک‌ها ========== */
 function createRipple(event, element) {
   const ripple = document.createElement("span");
   ripple.classList.add("ripple");
@@ -303,7 +313,7 @@ function createRipple(event, element) {
 
 function createProgressFill(element) {
   const progressFill = document.createElement("div");
-  progressFill.classList.add("progress-fill");
+  progressFill.classList.add("todo-item-fill");
   element.appendChild(progressFill);
 
   setTimeout(() => {
@@ -315,91 +325,151 @@ function createProgressFill(element) {
   }, 500);
 }
 
+function filterTodos() {
+  return todos.filter((todo) => {
+    const statusMatch =
+      currentFilter === "all" ||
+      (currentFilter === "completed" && todo.done) ||
+      (currentFilter === "active" && !todo.done);
+    const categoryMatch =
+      currentCategory === "all" || todo.category === currentCategory;
+    return statusMatch && categoryMatch;
+  });
+}
+
+function getImportanceText(importance) {
+  const importanceMap = {
+    low: "کم",
+    medium: "متوسط",
+    high: "زیاد",
+    critical: "خیلی زیاد",
+  };
+  return importanceMap[importance] || "متوسط";
+}
+
+function getCategoryText(category) {
+  const categoryMap = {
+    work: "کار",
+    study: "تحصیلی",
+    personal: "شخصی",
+    shopping: "خرید",
+  };
+  return categoryMap[category] || "شخصی";
+}
+
 function renderTodos() {
   todoList.innerHTML = "";
-  todos.forEach((todo, index) => {
+  const filteredTodos = filterTodos();
+
+  filteredTodos.forEach((todo) => {
+    const originalIndex = todos.indexOf(todo);
     const li = document.createElement("li");
     li.className = "todo-item" + (todo.done ? " done" : "");
 
-    if (currentEditIndex === index) {
-      li.innerHTML = `
-              <div class="todo-content">
-                <div class="todo-main">
-                  <div class="todo-edit-actions">
-                    <button class="todo-save-btn">✓</button>
-                    <button class="todo-cancel-btn">×</button>
-                  </div>
-                  <input type="text" class="todo-edit-input" value="${
-                    todo.text
-                  }" />
-                </div>
-                <div class="todo-meta">${todo.addedDate || ""}</div>
-              </div>
-            `;
+    const importanceTag = document.createElement("div");
+    importanceTag.className = `importance-tag importance-${
+      todo.importance || "medium"
+    }`;
+    importanceTag.textContent = getImportanceText(todo.importance || "medium");
 
+    const categoryTag = document.createElement("div");
+    categoryTag.className = "category-tag";
+    categoryTag.textContent = getCategoryText(todo.category || "personal");
+
+    if (currentEditIndex === originalIndex) {
+      li.innerHTML = `
+        <div class="todo-content">
+          <div class="todo-main">
+            <div class="todo-edit-actions">
+              <button class="todo-save-btn">✓</button>
+              <button class="todo-cancel-btn">×</button>
+            </div>
+            <input type="text" class="todo-edit-input" value="${todo.text}" />
+            <select class="todo-select" id="editCategory">
+              <option value="work" ${
+                todo.category === "work" ? "selected" : ""
+              }>کار</option>
+              <option value="study" ${
+                todo.category === "study" ? "selected" : ""
+              }>تحصیلی</option>
+              <option value="personal" ${
+                todo.category === "personal" ? "selected" : ""
+              }>شخصی</option>
+              <option value="shopping" ${
+                todo.category === "shopping" ? "selected" : ""
+              }>خرید</option>
+            </select>
+            <select class="todo-select" id="editImportance">
+              <option value="low" ${
+                todo.importance === "low" ? "selected" : ""
+              }>کم</option>
+              <option value="medium" ${
+                todo.importance === "medium" ? "selected" : ""
+              }>متوسط</option>
+              <option value="high" ${
+                todo.importance === "high" ? "selected" : ""
+              }>زیاد</option>
+              <option value="critical" ${
+                todo.importance === "critical" ? "selected" : ""
+              }>خیلی زیاد</option>
+            </select>
+          </div>
+          <div class="todo-meta">${todo.addedDate || ""}</div>
+        </div>`;
       const input = li.querySelector(".todo-edit-input");
       input.focus();
       input.select();
 
       li.querySelector(".todo-save-btn").onclick = () => {
         const newText = input.value.trim();
+        const newCategory = li.querySelector("#editCategory").value;
+        const newImportance = li.querySelector("#editImportance").value;
         if (newText) {
-          todos[index].text = newText;
+          todos[originalIndex] = {
+            ...todos[originalIndex],
+            text: newText,
+            category: newCategory,
+            importance: newImportance,
+          };
           saveTodos();
         }
         currentEditIndex = -1;
         renderTodos();
       };
-
       li.querySelector(".todo-cancel-btn").onclick = () => {
         currentEditIndex = -1;
         renderTodos();
       };
-
       input.addEventListener("keydown", (e) => {
-        if (e.key === "Enter") {
-          li.querySelector(".todo-save-btn").click();
-        } else if (e.key === "Escape") {
+        if (e.key === "Enter") li.querySelector(".todo-save-btn").click();
+        else if (e.key === "Escape")
           li.querySelector(".todo-cancel-btn").click();
-        }
       });
     } else {
       li.innerHTML = `
-              <div class="todo-content">
-                <div class="todo-main">
-                  <span class="todo-text" title="${todo.text}">${
-        todo.text
-      }</span>
-                </div>
-                <div class="todo-meta">${todo.addedDate || ""}</div>
-              </div>
-              <div class="todo-overlay">
-                <button class="ovl-todo ${
-                  todo.done ? "undone" : "done"
-                }" title="${todo.done ? "انجام نشد" : "انجام شد"}">${
-        todo.done ? "↶" : "✓"
-      }</button>
-                ${
-                  !todo.done
-                    ? '<button class="ovl-todo edit" title="ویرایش">&#9998;</button>'
-                    : ""
-                }
-                <button class="ovl-todo delete" title="حذف">&times;</button>
-              </div>
-            `;
+        <div class="todo-content">
+          <div class="todo-main">
+            <span class="todo-text" title="${todo.text}">${todo.text}</span>
+          </div>
+          <div class="todo-meta">${todo.addedDate || ""}</div>
+        </div>
+        <div class="todo-overlay">
+          <button class="ovl-todo ${todo.done ? "undone" : "done"}" title="${
+        todo.done ? "انجام نشد" : "انجام شد"
+      }">${todo.done ? "↶" : "✓"}</button>
+          ${
+            !todo.done
+              ? '<button class="ovl-todo edit" title="ویرایش">&#9998;</button>'
+              : ""
+          }
+          <button class="ovl-todo delete" title="حذف">&times;</button>
+        </div>`;
 
-      const txt = li.querySelector(".todo-text");
-      const doneBtn = li.querySelector(".ovl-todo.done, .ovl-todo.undone");
-      const editBtn = li.querySelector(".ovl-todo.edit");
-      const delBtn = li.querySelector(".ovl-todo.delete");
-
-      txt.onclick = (e) => {
+      const toggleDone = (e) => {
         createRipple(e, li);
         createProgressFill(li);
         li.classList.add("completing");
-
         todo.done = !todo.done;
-
         setTimeout(() => {
           li.classList.toggle("done");
           li.classList.remove("completing");
@@ -408,64 +478,67 @@ function renderTodos() {
         }, 500);
       };
 
-      doneBtn.onclick = (e) => {
+      li.querySelector(".todo-text").onclick = toggleDone;
+      li.querySelector(".ovl-todo.done, .ovl-todo.undone").onclick = (e) => {
         e.stopPropagation();
-        createRipple(e, li);
-        createProgressFill(li);
-        li.classList.add("completing");
-
-        todo.done = !todo.done;
-
-        setTimeout(() => {
-          li.classList.toggle("done");
-          li.classList.remove("completing");
-          saveTodos();
-          renderTodos();
-        }, 500);
+        toggleDone(e);
       };
 
+      const editBtn = li.querySelector(".ovl-todo.edit");
       if (editBtn) {
         editBtn.onclick = () => {
-          currentEditIndex = index;
+          currentEditIndex = originalIndex;
           renderTodos();
         };
       }
 
-      delBtn.onclick = () => {
+      li.querySelector(".ovl-todo.delete").onclick = (event) => {
         if (confirm("حذف شود؟")) {
           createRipple(event, li);
           setTimeout(() => {
-            todos.splice(index, 1);
+            todos.splice(originalIndex, 1);
             saveTodos();
             renderTodos();
           }, 500);
         }
       };
     }
-
+    li.appendChild(importanceTag);
+    li.appendChild(categoryTag);
     todoList.appendChild(li);
   });
-  
-  // Add fade-in animation to todo items
-  document.querySelectorAll(".todo-item").forEach((item, index) => {
-    item.classList.add("fade-in", `fade-in-delay-${(index % 4) + 1}`);
-    if (isInViewport(item)) {
-      item.classList.add("visible");
-    }
-  });
+  emptyTodos();
 }
 
 todoForm.addEventListener("submit", (e) => {
   e.preventDefault();
   const text = todoInput.value.trim();
   if (!text) return;
-  todos.push({ text, done: false, addedDate: formatDateTime() });
+  todos.push({
+    text,
+    done: false,
+    addedDate: formatDateTime(),
+    category: todoCategory.value,
+    importance: todoImportance.value,
+  });
   saveTodos();
   renderTodos();
   todoInput.value = "";
 });
 
-renderTodos();
+document.querySelectorAll(".filter-btn").forEach((btn) => {
+  btn.addEventListener("click", () => {
+    document.querySelector(".filter-btn.active").classList.remove("active");
+    btn.classList.add("active");
+    currentFilter = btn.dataset.filter;
+    renderTodos();
+  });
+});
+
+categoryFilter.addEventListener("change", (e) => {
+  currentCategory = e.target.value;
+  renderTodos();
+});
 
 // ========== تاریخ و زمان شمسی ==========
 function updateDateTime() {
@@ -479,28 +552,34 @@ function updateDateTime() {
     minute: "2-digit",
     second: "2-digit",
   };
-  const persianDateTime = now.toLocaleDateString("fa-IR", options);
-  document.getElementById("datetimeDisplay").textContent = persianDateTime;
+  document.getElementById("datetimeDisplay").textContent =
+    now.toLocaleDateString("fa-IR", options);
 }
-
 updateDateTime();
 setInterval(updateDateTime, 1000);
 
-// ========== تایمر پومودورو - طراحی جدید با ویژگی‌های جدید ==========
+// ========== تایمر پومودورو - (FINAL FIXED) ==========
+
 let pomodoroInterval = null;
-// مقداردهی اولیه با استفاده از تنظیمات ذخیره شده
-const initialSettings = loadPomodoroSettings();
-let pomodoroTimeLeft = initialSettings.work * 60;
-let pomodoroMode = "work";
 let pomodoroRunning = false;
 let consecutiveWorkSessions = 0;
+let studySeconds = 0;
+let totalStudySeconds = 0;
+
+const pomodoroDisplay = document.getElementById("pomodoroDisplay");
+const pomodoroModeDisplay = document.getElementById("pomodoroMode");
+const pomodoroStartBtn = document.getElementById("pomodoroStart");
+const pomodoroResetBtn = document.getElementById("pomodoroReset");
+const pomodoroSettingsBtn = document.getElementById("pomodoroSettings");
+const progressCircle = document.getElementById("progress-circle");
+const radius = 90;
+const circumference = 2 * Math.PI * radius;
 
 function loadPomodoroSettings() {
   try {
-    const settings = JSON.parse(
+    return JSON.parse(
       localStorage.getItem(POMODORO_SETTINGS_KEY) || '{"work":25,"break":5}'
     );
-    return settings;
   } catch {
     return { work: 25, break: 5 };
   }
@@ -512,13 +591,12 @@ function savePomodoroSettings(settings) {
 
 function loadPomodoroStats() {
   try {
-    const stats = JSON.parse(
+    return JSON.parse(
       localStorage.getItem(POMODORO_STATS_KEY) ||
-        '{"today":0,"totalMinutes":0,"points":0}'
+        '{"today":0,"totalSeconds":0,"lastReset":""}'
     );
-    return stats;
   } catch {
-    return { today: 0, totalMinutes: 0, points: 0 };
+    return { today: 0, totalSeconds: 0, lastReset: "" };
   }
 }
 
@@ -526,138 +604,133 @@ function savePomodoroStats(stats) {
   localStorage.setItem(POMODORO_STATS_KEY, JSON.stringify(stats));
 }
 
+function initializeStudyTime() {
+  const stats = loadPomodoroStats();
+  totalStudySeconds = stats.totalSeconds || 0;
+}
+
 function updatePomodoroStats() {
   const stats = loadPomodoroStats();
   document.getElementById("todayPomodoros").textContent = stats.today;
-  document.getElementById("todayMinutes").textContent = stats.totalMinutes;
+  const totalSeconds = stats.totalSeconds || 0;
+  const hours = Math.floor(totalSeconds / 3600);
+  const minutes = Math.floor((totalSeconds % 3600) / 60);
+  const seconds = totalSeconds % 60;
+  const formattedTime = `${hours.toString().padStart(2, "0")}:${minutes
+    .toString()
+    .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
+  document.getElementById("todayMinutes").textContent = formattedTime;
 
-  // به‌روزرسانی مدال‌ها
-  if (stats.today >= 4) {
-    document.getElementById("achievement1").classList.add("earned");
-  }
-  if (stats.today >= 8) {
-    document.getElementById("achievement2").classList.add("earned");
-  }
-  if (stats.today >= 12) {
-    document.getElementById("achievement3").classList.add("earned");
-  }
+  document
+    .getElementById("achievement1")
+    .classList.toggle("earned", stats.today >= 4);
+  document
+    .getElementById("achievement2")
+    .classList.toggle("earned", stats.today >= 8);
+  document
+    .getElementById("achievement3")
+    .classList.toggle("earned", stats.today >= 12);
 }
 
 function resetDailyStats() {
   const stats = loadPomodoroStats();
   const today = new Date().toLocaleDateString("fa-IR");
-  const lastReset = stats.lastReset || "";
-
-  if (lastReset !== today) {
-    // اگر روز جدیدی شروع شده، آمار روز را ریست می‌کنیم
+  if (stats.lastReset !== today) {
     stats.today = 0;
-    stats.totalMinutes = 0;
+    stats.totalSeconds = 0;
     stats.lastReset = today;
     savePomodoroStats(stats);
+    totalStudySeconds = 0;
+    studySeconds = 0;
     updatePomodoroStats();
-
-    // ریست کردن مدال‌ها
-    document.getElementById("achievement1").classList.remove("earned");
-    document.getElementById("achievement2").classList.remove("earned");
-    document.getElementById("achievement3").classList.remove("earned");
+    showNotification("روز جدید", "آمار مطالعه امروز ریست شد.");
   }
 }
 
 function clearPomodoroStats() {
-  if (confirm("آیا از پاک کردن آمار مطالعه مطمئن هستید؟")) {
-    localStorage.removeItem(POMODORO_STATS_KEY);
+  if (confirm("آیا از پاک کردن تمام آمار مطالعه مطمئن هستید؟")) {
+    const stats = {
+      today: 0,
+      totalSeconds: 0,
+      lastReset: new Date().toLocaleDateString("fa-IR"),
+    };
+    savePomodoroStats(stats);
+    initializeStudyTime();
     updatePomodoroStats();
-
-    // ریست کردن مدال‌ها
-    document.getElementById("achievement1").classList.remove("earned");
-    document.getElementById("achievement2").classList.remove("earned");
-    document.getElementById("achievement3").classList.remove("earned");
-
-    showNotification("آمار پاک شد", "تمام آمار مطالعه امروز پاک شد");
+    showNotification("آمار پاک شد", "تمام آمار مطالعه پاک شد.");
   }
 }
 
-const pomodoroDisplay = document.getElementById("pomodoroDisplay");
-const pomodoroModeDisplay = document.getElementById("pomodoroMode");
-const pomodoroStartBtn = document.getElementById("pomodoroStart");
-const pomodoroResetBtn = document.getElementById("pomodoroReset");
-const pomodoroSettingsBtn = document.getElementById("pomodoroSettings");
-const progressCircle = document.getElementById("progress-circle");
-
-const radius = 90;
-const circumference = 2 * Math.PI * radius;
+let initialSettings = loadPomodoroSettings();
+let pomodoroTimeLeft = initialSettings.work * 60;
+let pomodoroMode = "work";
 
 function updatePomodoroDisplay() {
   const minutes = Math.floor(pomodoroTimeLeft / 60);
-  const seconds = pomodoroTimeLeft % 60;
+  const seconds = Math.floor(pomodoroTimeLeft % 60);
   pomodoroDisplay.textContent = `${minutes
     .toString()
     .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`;
-
   const totalTime =
-    pomodoroMode === "work"
-      ? loadPomodoroSettings().work * 60
-      : loadPomodoroSettings().break * 60;
+    (pomodoroMode === "work"
+      ? loadPomodoroSettings().work
+      : loadPomodoroSettings().break) * 60;
   const progress = (totalTime - pomodoroTimeLeft) / totalTime;
-  const offset = circumference - progress * circumference;
-  progressCircle.style.strokeDashoffset = offset;
+  progressCircle.style.strokeDashoffset =
+    circumference - progress * circumference;
 }
 
 function startPomodoro() {
   if (pomodoroRunning) return;
-
   pomodoroRunning = true;
   pomodoroStartBtn.innerHTML =
-    '<svg style="width: 34px; height:34px; text-align: center;" viewBox="0 0 24 24" fill="currentColor" class="size-6"><path fill-rule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clip-rule="evenodd" /></svg><span class="pomodoro-tooltip">توقف تایمر</span>';
+    '<svg style="width: 34px; height:34px; text-align: center;" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.5 7.5a3 3 0 0 1 3-3h9a3 3 0 0 1 3 3v9a3 3 0 0 1-3 3h-9a3 3 0 0 1-3-3v-9Z" clip-rule="evenodd" /></svg><span class="pomodoro-tooltip">توقف تایمر</span>';
 
   pomodoroInterval = setInterval(() => {
-    pomodoroTimeLeft--;
+    if (pomodoroRunning) {
+      pomodoroTimeLeft--;
+      if (pomodoroMode === "work") {
+        totalStudySeconds++;
+        const stats = loadPomodoroStats();
+        stats.totalSeconds = totalStudySeconds;
+        savePomodoroStats(stats);
+        updatePomodoroStats();
+      }
+    }
     updatePomodoroDisplay();
 
-    if (pomodoroTimeLeft <= 0) {
+    if (pomodoroTimeLeft < 1) {
       clearInterval(pomodoroInterval);
       pomodoroRunning = false;
       pomodoroStartBtn.innerHTML =
-        '▶<span class="pomodoro-tooltip">شروع تایمر</span>';
+        '<svg style="width: 34px; height: 34px; text-align: center" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd"></path></svg><span class="pomodoro-tooltip">شروع تایمر</span>';
+      localStorage.removeItem(POMODORO_STATE_KEY);
 
       if (pomodoroMode === "work") {
-        // به‌روزرسانی آمار
         const stats = loadPomodoroStats();
-
         stats.today++;
-        stats.totalMinutes += loadPomodoroSettings().work;
-        stats.points += loadPomodoroSettings().work; // هر دقیقه یک امتیاز
-
-        consecutiveWorkSessions++;
-
+        stats.totalSeconds = totalStudySeconds;
         savePomodoroStats(stats);
         updatePomodoroStats();
-
-        // بررسی مدال‌ها
+        consecutiveWorkSessions++;
         if (consecutiveWorkSessions >= 4) {
           showNotification("وقت استراحت بلندتره", "🍵 برو یه چایی بخور!");
           consecutiveWorkSessions = 0;
         }
-
-        // تغییر به حالت استراحت
         pomodoroMode = "break";
         pomodoroTimeLeft = loadPomodoroSettings().break * 60;
         pomodoroModeDisplay.textContent = "استراحت";
         pomodoroModeDisplay.classList.add("break");
         progressCircle.classList.add("break");
-
-        showNotification("زمان استراحت!", "۵ دقیقه استراحت کنید");
+        showNotification("زمان استراحت", "وقتشه یه کم استراحت کنی!");
       } else {
-        // تغییر به حالت کار
         pomodoroMode = "work";
         pomodoroTimeLeft = loadPomodoroSettings().work * 60;
         pomodoroModeDisplay.textContent = "کار";
         pomodoroModeDisplay.classList.remove("break");
         progressCircle.classList.remove("break");
-
         showNotification("زمان کار!", "زمان شروع دور بعدی کار است");
       }
-
       updatePomodoroDisplay();
     }
   }, 1000);
@@ -665,34 +738,83 @@ function startPomodoro() {
 
 function stopPomodoro() {
   if (!pomodoroRunning) return;
-
   clearInterval(pomodoroInterval);
   pomodoroRunning = false;
   pomodoroStartBtn.innerHTML =
-    '▶<span class="pomodoro-tooltip">شروع تایمر</span>';
+    '<svg style="width: 34px; height: 34px; text-align: center" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd"></path></svg><span class="pomodoro-tooltip">شروع تایمر</span>';
+
+  savePomodoroState();
+
+  const stats = loadPomodoroStats();
+  stats.totalSeconds = totalStudySeconds;
+  savePomodoroStats(stats);
+  updatePomodoroStats();
 }
 
 function resetPomodoro() {
-  stopPomodoro();
+  clearInterval(pomodoroInterval);
+  pomodoroRunning = false;
+  localStorage.removeItem(POMODORO_STATE_KEY);
   pomodoroMode = "work";
   pomodoroTimeLeft = loadPomodoroSettings().work * 60;
   pomodoroModeDisplay.textContent = "کار";
   pomodoroModeDisplay.classList.remove("break");
   progressCircle.classList.remove("break");
   updatePomodoroDisplay();
+  pomodoroStartBtn.innerHTML =
+    '<svg style="width: 34px; height: 34px; text-align: center" viewBox="0 0 24 24" fill="currentColor"><path fill-rule="evenodd" d="M4.5 5.653c0-1.427 1.529-2.33 2.779-1.643l11.54 6.347c1.295.712 1.295 2.573 0 3.286L7.28 19.99c-1.25.687-2.779-.217-2.779-1.643V5.653Z" clip-rule="evenodd"></path></svg><span class="pomodoro-tooltip">شروع تایمر</span>';
 }
 
-pomodoroStartBtn.addEventListener("click", () => {
-  if (pomodoroRunning) {
-    stopPomodoro();
+function savePomodoroState() {
+  const state = {
+    timeLeft: pomodoroTimeLeft,
+    mode: pomodoroMode,
+    timestamp: Date.now(),
+    totalStudySeconds: totalStudySeconds,
+    isRunning: pomodoroRunning,
+  };
+  localStorage.setItem(POMODORO_STATE_KEY, JSON.stringify(state));
+}
+
+function loadPomodoroState() {
+  const savedStateJSON = localStorage.getItem(POMODORO_STATE_KEY);
+  if (!savedStateJSON) return;
+  const savedState = JSON.parse(savedStateJSON);
+
+  pomodoroMode = savedState.mode;
+  totalStudySeconds = savedState.totalStudySeconds || 0;
+
+  if (savedState.isRunning) {
+    const timePassed = (Date.now() - savedState.timestamp) / 1000;
+    if (savedState.timeLeft > timePassed) {
+      pomodoroTimeLeft = savedState.timeLeft - timePassed;
+      startPomodoro();
+    } else {
+      pomodoroTimeLeft = loadPomodoroSettings().work * 60;
+    }
   } else {
-    startPomodoro();
+    pomodoroTimeLeft = savedState.timeLeft;
   }
+
+  if (pomodoroMode === "break") {
+    pomodoroModeDisplay.textContent = "استراحت";
+    pomodoroModeDisplay.classList.add("break");
+    progressCircle.classList.add("break");
+  } else {
+    pomodoroModeDisplay.textContent = "کار";
+    pomodoroModeDisplay.classList.remove("break");
+    progressCircle.classList.remove("break");
+  }
+
+  localStorage.removeItem(POMODORO_STATE_KEY);
+}
+
+window.addEventListener("beforeunload", savePomodoroState);
+
+pomodoroStartBtn.addEventListener("click", () => {
+  pomodoroRunning ? stopPomodoro() : startPomodoro();
 });
-
 pomodoroResetBtn.addEventListener("click", resetPomodoro);
-
-// دکمه پاک کردن آمار
 document
   .getElementById("clearStatsBtn")
   .addEventListener("click", clearPomodoroStats);
@@ -701,7 +823,6 @@ const pomodoroSettingsModal = document.getElementById("pomodoroSettingsModal");
 const workDurationInput = document.getElementById("workDuration");
 const breakDurationInput = document.getElementById("breakDuration");
 const saveSettingsBtn = document.getElementById("saveSettings");
-const cancelSettingsBtn = document.getElementById("cancelSettings");
 
 pomodoroSettingsBtn.addEventListener("click", () => {
   const settings = loadPomodoroSettings();
@@ -709,38 +830,27 @@ pomodoroSettingsBtn.addEventListener("click", () => {
   breakDurationInput.value = settings.break;
   pomodoroSettingsModal.style.display = "block";
 });
-
-document.querySelector("#pomodoroSettingsModal .close").onclick = () => {
-  pomodoroSettingsModal.style.display = "none";
-};
-
-cancelSettingsBtn.addEventListener("click", () => {
-  pomodoroSettingsModal.style.display = "none";
-});
-
+document.querySelector("#pomodoroSettingsModal .close").onclick = () =>
+  (pomodoroSettingsModal.style.display = "none");
+document.getElementById("cancelSettings").onclick = () =>
+  (pomodoroSettingsModal.style.display = "none");
 saveSettingsBtn.addEventListener("click", () => {
   const workDuration = parseInt(workDurationInput.value);
   const breakDuration = parseInt(breakDurationInput.value);
-
   if (workDuration > 0 && breakDuration > 0) {
-    const settings = { work: workDuration, break: breakDuration };
-    savePomodoroSettings(settings);
-
-    // به‌روزرسانی زمان فعلی تایمر اگر در حال اجرا نیست
-    if (!pomodoroRunning) {
-      pomodoroTimeLeft = workDuration * 60;
-      updatePomodoroDisplay();
-    }
-
+    savePomodoroSettings({ work: workDuration, break: breakDuration });
+    resetPomodoro();
     pomodoroSettingsModal.style.display = "none";
     showNotification("تنظیمات ذخیره شد", "زمان‌های جدید اعمال شدند");
   }
 });
 
 progressCircle.style.strokeDasharray = circumference;
+resetDailyStats();
+initializeStudyTime();
+loadPomodoroState();
 updatePomodoroDisplay();
 updatePomodoroStats();
-resetDailyStats();
 
 // ========== نوتیفیکشن سفارشی ==========
 const notificationBar = document.getElementById("notificationBar");
@@ -750,37 +860,42 @@ const notificationClose = document.getElementById("notificationClose");
 function showNotification(title, message) {
   notificationMessage.textContent = `${title}: ${message}`;
   notificationBar.classList.add("show");
-
-  setTimeout(() => {
-    notificationBar.classList.remove("show");
-  }, 5000);
+  setTimeout(() => notificationBar.classList.remove("show"), 5000);
 }
-
-notificationClose.addEventListener("click", () => {
-  notificationBar.classList.remove("show");
-});
+notificationClose.addEventListener("click", () =>
+  notificationBar.classList.remove("show")
+);
 
 // ========== نوتیفیکشن کلاس ==========
 function getCurrentTimeSlot() {
   const now = new Date();
-  const hours = now.getHours();
-  const minutes = now.getMinutes();
-  const currentTime = hours * 60 + minutes;
+  const currentTime = now.getHours() * 60 + now.getMinutes();
 
+  // This needs to be dynamic if times are editable.
+  // For now, it uses the original hardcoded values which is a limitation.
   const timeSlots = {
-    "7:30-9:30": { start: 7 * 60 + 30, end: 9 * 60 + 30 },
-    "9:30-11:30": { start: 9 * 60 + 30, end: 11 * 60 + 30 },
-    "13-15": { start: 13 * 60, end: 15 * 60 },
-    "15-17": { start: 15 * 60, end: 17 * 60 },
-    "18-20": { start: 18 * 60, end: 20 * 60 },
+    "۷:۳۰ - ۹:۳۰": { start: 450, end: 570 },
+    "۹:۳۰ - ۱۱:۳۰": { start: 570, end: 690 },
+    "۱۳ - ۱۵": { start: 780, end: 900 },
+    "۱۵ - ۱۷": { start: 900, end: 1020 },
+    "۱۸ - ۲۰": { start: 1080, end: 1200 },
   };
 
-  for (const [slot, times] of Object.entries(timeSlots)) {
-    if (currentTime >= times.start && currentTime < times.end) {
-      return slot;
+  const currentHeaders = Array.from(
+    document.querySelectorAll(".time-header-cell:not(:first-child) span")
+  ).map((s) => s.textContent);
+
+  // This is a simple lookup, assumes format doesn't change drastically.
+  // A more robust solution would parse times into minutes.
+  for (const timeText of currentHeaders) {
+    const key = Object.keys(timeSlots).find(k => k === timeText);
+    if(key) {
+        const slot = timeSlots[key];
+         if (currentTime >= slot.start && currentTime < slot.end) {
+             return key;
+         }
     }
   }
-
   return null;
 }
 
@@ -801,38 +916,23 @@ function getPersianDay() {
 function hasClassInCurrentTimeSlot() {
   const currentDay = getPersianDay();
   const currentTimeSlot = getCurrentTimeSlot();
-
-  if (!currentTimeSlot) {
-    return false;
-  }
-
-  const saved = loadFromStorage();
-  const classKey = `${currentDay}-${currentTimeSlot}`;
-  const classInfo = saved[classKey];
-
+  if (!currentTimeSlot) return false;
+  const classInfo = loadFromStorage()[`${currentDay}-${currentTimeSlot}`];
   return !!(classInfo && classInfo.subject);
 }
 
 function updateNotificationIconVisibility() {
   const notificationIcon = document.getElementById("notificationIcon");
-  if (hasClassInCurrentTimeSlot()) {
-    notificationIcon.style.display = "flex";
-  } else {
-    notificationIcon.style.display = "none";
-  }
+  notificationIcon.style.display = hasClassInCurrentTimeSlot()
+    ? "flex"
+    : "none";
 }
 
 function showClassNotification() {
-  if (!hasClassInCurrentTimeSlot()) {
-    return;
-  }
-
   const currentDay = getPersianDay();
   const currentTimeSlot = getCurrentTimeSlot();
-  const saved = loadFromStorage();
-  const classKey = `${currentDay}-${currentTimeSlot}`;
-  const classInfo = saved[classKey];
-
+  if (!currentTimeSlot) return;
+  const classInfo = loadFromStorage()[`${currentDay}-${currentTimeSlot}`];
   if (classInfo && classInfo.subject) {
     showNotification(
       "یادآوری کلاس",
@@ -841,75 +941,212 @@ function showClassNotification() {
   }
 }
 
-document.getElementById("notificationIcon").addEventListener("click", () => {
-  showClassNotification();
-});
+document
+  .getElementById("notificationIcon")
+  .addEventListener("click", showClassNotification);
 
 window.addEventListener("load", () => {
-  const firstVisit = localStorage.getItem(FIRST_VISIT_KEY);
-
-  if (!firstVisit) {
+  if (!localStorage.getItem(FIRST_VISIT_KEY)) {
     localStorage.setItem(FIRST_VISIT_KEY, "true");
-
-    setTimeout(() => {
-      showClassNotification();
-    }, 2000);
+    setTimeout(showClassNotification, 2000);
   }
-
-  updateNotificationIconVisibility();
-
-  setInterval(() => {
-    showClassNotification();
-    resetDailyStats();
-  }, 60000);
-
+  setInterval(showClassNotification, 60000);
   showClassNotification();
   updateNotificationIconVisibility();
+  renderTodos();
 });
 
 // ========== Fade-in Animations ==========
 function isInViewport(element) {
   const rect = element.getBoundingClientRect();
   return (
-    rect.top <= (window.innerHeight || document.documentElement.clientHeight) * 0.8 &&
+    rect.top <=
+      (window.innerHeight || document.documentElement.clientHeight) * 0.8 &&
     rect.bottom >= 0
   );
 }
 
 function checkVisibility() {
-  const elements = document.querySelectorAll('.fade-in, .schedule-wrapper, .todo-sidebar, .pomodoro-container, .pomodoro-stats, .todo-item');
-  
-  elements.forEach(element => {
-    if (isInViewport(element)) {
-      element.classList.add('visible');
-    }
-  });
+  document
+    .querySelectorAll(
+      ".fade-in, .schedule-wrapper, .todo-sidebar, .pomodoro-container, .pomodoro-stats"
+    )
+    .forEach((element) => {
+      if (isInViewport(element)) element.classList.add("visible");
+    });
 }
 
-// Initial check on page load
-document.addEventListener('DOMContentLoaded', () => {
-  // Add staggered animation to table rows
-  const tableRows = document.querySelectorAll('.schedule-table tbody tr');
-  tableRows.forEach((row, index) => {
-    row.style.transitionDelay = `${index * 0.1}s`;
+document.addEventListener("DOMContentLoaded", () => {
+  // CORRECTED: Apply custom times BEFORE rendering classes
+  loadAndApplyCustomTimeSlots();
+  renderSavedClasses();
+
+  // Initialize the rest of the page
+  document.querySelectorAll(".class-cell").forEach((c) => {
+    addOverlay(c);
+    addPasteButton(c);
   });
   
-  // Check visibility after a short delay to ensure CSS is applied
+  document
+    .querySelectorAll(".schedule-table tbody tr")
+    .forEach((row, index) => {
+      row.style.transitionDelay = `${index * 0.1}s`;
+    });
   setTimeout(checkVisibility, 100);
+
+  const welcomeModal = document.getElementById("welcomeModal");
+  const welcomeModalClose = document.getElementById("welcomeModalClose");
+
+  if (!localStorage.getItem(WELCOME_KEY)) {
+    welcomeModal.style.display = "block";
+    localStorage.setItem(WELCOME_KEY, "true");
+  }
+
+  welcomeModalClose.onclick = function () {
+    welcomeModal.style.display = "none";
+  };
+
+  window.addEventListener("click", function (event) {
+    if (event.target == welcomeModal) {
+      welcomeModal.style.display = "none";
+    }
+  });
+
+  addEditTimeSlotListeners();
 });
 
-// Check visibility on scroll
-window.addEventListener('scroll', () => {
-  // Throttle scroll events for performance
-  if (!window.scrollTimeout) {
-    window.scrollTimeout = setTimeout(() => {
+document
+  .querySelector(".clear-todo-btn")
+  .addEventListener("click", function () {
+    if (confirm("آیا از پاک کردن تمام کارها مطمئن هستید؟")) {
+      todos = [];
+      saveTodos();
+      renderTodos();
+      showNotification("پاکسازی کارها", "تمام کارها با موفقیت پاک شدند");
+    }
+  });
+
+let scrollTimeout;
+window.addEventListener("scroll", () => {
+  if (!scrollTimeout) {
+    scrollTimeout = setTimeout(() => {
       checkVisibility();
-      window.scrollTimeout = null;
+      scrollTimeout = null;
     }, 50);
   }
 });
 
-// Check visibility when window is resized
-window.addEventListener('resize', checkVisibility);
+window.addEventListener("resize", checkVisibility);
 
+// ========== CORRECTED: Edit Time Slot Functionality ==========
 
+function loadAndApplyCustomTimeSlots() {
+  const savedTimesJSON = localStorage.getItem(TIME_SLOTS_KEY);
+  if (!savedTimesJSON) return;
+
+  try {
+    const savedTimes = JSON.parse(savedTimesJSON);
+    const headers = document.querySelectorAll(
+      ".time-header-cell:not(:first-child)"
+    );
+
+    if (Array.isArray(savedTimes) && savedTimes.length === headers.length) {
+      headers.forEach((th, index) => {
+        const newTime = savedTimes[index];
+        th.querySelector("span").textContent = newTime;
+
+        const colIndex = index + 1;
+        document.querySelectorAll(".schedule-table tbody tr").forEach((row) => {
+          const cell = row.children[colIndex];
+          if (cell) {
+            cell.dataset.time = newTime;
+          }
+        });
+      });
+    }
+  } catch (e) {
+    console.error("Failed to parse or apply custom time slots:", e);
+    localStorage.removeItem(TIME_SLOTS_KEY);
+  }
+}
+
+function addEditTimeSlotListeners() {
+  document.querySelectorAll(".edit-time-btn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const th = e.target.closest(".time-header-cell");
+      const span = th.querySelector("span");
+      const oldTime = span.textContent.trim();
+
+      const input = document.createElement("input");
+      input.type = "text";
+      input.value = oldTime;
+
+      th.replaceChild(input, span);
+      input.focus();
+      input.select();
+
+      const saveChanges = () => {
+        const newTime = input.value.trim();
+        const newSpan = document.createElement("span");
+        newSpan.textContent = newTime && newTime !== oldTime ? newTime : oldTime;
+        th.replaceChild(newSpan, input);
+
+        if (newTime && newTime !== oldTime) {
+          updateTimeSlot(th, oldTime, newTime);
+        }
+      };
+
+      input.addEventListener("blur", saveChanges);
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          input.blur();
+        } else if (event.key === "Escape") {
+          const originalSpan = document.createElement("span");
+          originalSpan.textContent = oldTime;
+          th.replaceChild(originalSpan, input);
+        }
+      });
+    });
+  });
+}
+
+function updateTimeSlot(thElement, oldTime, newTime) {
+  const colIndex =
+    Array.from(thElement.parentNode.children).indexOf(thElement);
+
+  document.querySelectorAll(".schedule-table tbody tr").forEach((row) => {
+    const cell = row.children[colIndex];
+    if (cell && cell.classList.contains("class-cell")) {
+      cell.dataset.time = newTime;
+    }
+  });
+
+  const saved = loadFromStorage();
+  const updatedData = {};
+  for (const key in saved) {
+    const firstHyphenIndex = key.indexOf("-");
+    if (firstHyphenIndex > -1) {
+      const day = key.substring(0, firstHyphenIndex);
+      const time = key.substring(firstHyphenIndex + 1);
+      if (time === oldTime) {
+        const newKey = `${day}-${newTime}`;
+        updatedData[newKey] = saved[key];
+      } else {
+        updatedData[key] = saved[key];
+      }
+    } else {
+      updatedData[key] = saved[key];
+    }
+  }
+  saveToStorage(updatedData);
+
+  const allCurrentTimes = Array.from(
+    document.querySelectorAll(".time-header-cell:not(:first-child) span")
+  ).map((span) => span.textContent);
+  localStorage.setItem(TIME_SLOTS_KEY, JSON.stringify(allCurrentTimes));
+
+  showNotification(
+    "زمان ویرایش شد",
+    `ساعت "${oldTime}" به "${newTime}" تغییر کرد.`
+  );
+}
